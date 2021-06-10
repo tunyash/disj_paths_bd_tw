@@ -1,0 +1,6 @@
+[submodule "doctest"]
+	path = doctest
+	url = https://github.com/onqtam/doctest.git
+[submodule "tdlib"]
+	path = tdlib
+	url = https://github.com/freetdi/tdlib.git
