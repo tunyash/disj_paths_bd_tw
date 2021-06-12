@@ -1,9 +1,6 @@
 #include "../tdlib/src/combinations.hpp"
 #include <iostream>
 #include <vector>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <set>
 #include "path-decomposition.h"
 
@@ -36,7 +33,7 @@ const char *PathDecomposition::CorectnessException::what() const throw() {
 void PathDecomposition::Check() {
     int n = boost::num_vertices(_g);
 
-    for (std::vector<vertex_t> bag : _bags) {
+    for (std::vector<vertex_t> &bag : _bags) {
         std::sort(bag.begin(), bag.end());
         bag.resize(std::unique(bag.begin(), bag.end()) - bag.begin());
         //Erasing non-unique vertices from bags
@@ -98,11 +95,9 @@ PathDecomposition::PathDecomposition(Graph g): _g(g) {
 }
 
 void PathDecomposition::transform() {
-
-
     treedec::comb::PP_FI<Graph> algo(_g);
     algo.do_it();
-    treedec::graph_traits<Graph>::treedec_type t;
+    Tree t;
     algo.get_tree_decomposition(t);
     auto tree_bags = get(treedec::bag_t(), t);
 
@@ -117,7 +112,7 @@ void PathDecomposition::transform() {
     // parent[v] = parent of vertex |v| in centroid tree
 
     std::function<void(int, int, int)> size_calculation;
-    size_calculation = [&](tree_vertex v, int depth, tree_vertex p = -1) {
+    size_calculation = [&](tree_vertex v, int depth, tree_vertex p) {
         size[v][depth] = 1;
         for (auto item = boost::adjacent_vertices(v, t).first;
         item != boost::adjacent_vertices(v, t).second;
@@ -130,19 +125,19 @@ void PathDecomposition::transform() {
     };
 
     std::function<tree_vertex(int, int, int, int)> find_centroid;
-    find_centroid = [&](tree_vertex v, int depth, int n = 0, tree_vertex p = -1) {
+    find_centroid = [&](tree_vertex v, int depth, int all, tree_vertex p) {
         for (auto item = boost::adjacent_vertices(v, t).first;
         item != boost::adjacent_vertices(v, t).second;
         ++item) {
             vertex_t u = *item;
             if (p == u || used[u]) continue;
-            if (size[u][depth] >= n / 2) return find_centroid(u, depth, n, v);
+            if (size[u][depth] > all / 2) return find_centroid(u, depth, n, v);
         }
         return v;
     };
 
     std::function<void(int, int, int)> build_cetroid_tree;
-    build_cetroid_tree = [&](tree_vertex v, int depth = 0, int p = -1) {
+    build_cetroid_tree = [&](tree_vertex v, int depth, tree_vertex p) {
         size_calculation(v, depth, -1);
         tree_vertex c = find_centroid(v, depth, size[v][depth], -1);
         used[c] = 1;
@@ -159,7 +154,7 @@ void PathDecomposition::transform() {
         }
         if (adjacency == 0) {
             _bags.push_back({});
-            for (tree_vertex u = c; u != -1; u = parent[u]) {
+            for (tree_vertex u = c; u < n; u = parent[u]) {
                 for (vertex_t item : get(tree_bags, u)) {
                     _bags.back().push_back(item);
                 }
