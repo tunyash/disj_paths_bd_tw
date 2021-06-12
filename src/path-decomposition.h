@@ -1,12 +1,17 @@
 #include <vector>
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
+#include "../tdlib/src/treedec_traits.hpp"
+
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+typedef std::set<vertex_t> bag_container_type;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
+        boost::property<treedec::bag_t, bag_container_type>> Tree;
+typedef boost::graph_traits<Tree>::vertex_descriptor tree_vertex;
 
 class PathDecomposition {
-
-    typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
-
-    std::vector<std::vector<int>> _bags;
+    std::vector<std::vector<vertex_t>> _bags;
     Graph _g;
 
 public:
@@ -43,21 +48,27 @@ public:
         const char* what() const throw();
     };
 
-    PathDecomposition(std::vector<std::vector<int>> bags, Graph g);
+    PathDecomposition(std::vector<std::vector<vertex_t>> bags, Graph g);
     /*
     Constructor creates path-width decomposition where |bags[i]| is i-th bag of decomposition.
     |bags| is path-width decompostion of graph |g|.
     @exceptions throw CorrectnessException if decomposition is not correct
     */
 
+    PathDecomposition(Graph g);
+//    Calls function |transform|
+//    @exceptions throw CorrectnessException if algorithm works incorrect
+
 private:
 
-    bool Check();
+    void Check();
     /*
         Function checks correctness of path-width decomposition |_bags| of graph |_g|.
-        @return true if decomposition is correct false otherwise
+        @exceptions throw CorrectnessException if decomposition is not correct
     */
 
+    void transform();
+    // Function creates path-width decomposition of graph |_g| with tdlib library and centroid-decomposition algorithm
 
 };
 

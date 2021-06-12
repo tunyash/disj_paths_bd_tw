@@ -1,11 +1,19 @@
+#include "../tdlib/src/combinations.hpp"
 #include <iostream>
 #include <vector>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
-#include <algorithm>
+#include <boost/property_map/property_map.hpp>
+#include <set>
 #include "path-decomposition.h"
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
+typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
+typedef std::set<vertex_t> bag_container_type;
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
+        boost::property<treedec::bag_t, bag_container_type>> Tree;
+typedef boost::graph_traits<Tree>::vertex_descriptor tree_vertex;
+typedef boost::property_map<Tree, treedec::bag_t>::type BagMap;
 
 PathDecomposition::CorectnessException::CorectnessException(int error_type): _error_type(error_type) {}
 PathDecomposition::CorectnessException::CorectnessException
@@ -33,10 +41,10 @@ const char *PathDecomposition::CorectnessException::what() const throw() {
     }
 }
 
-bool PathDecomposition::Check() {
+void PathDecomposition::Check() {
     int n = boost::num_vertices(_g);
 
-    for (std::vector<int> bag : _bags) {
+    for (std::vector<vertex_t> bag : _bags) {
         std::sort(bag.begin(), bag.end());
         bag.resize(std::unique(bag.begin(), bag.end()) - bag.begin());
         //Erasing non-unique vertices from bags
@@ -51,7 +59,7 @@ bool PathDecomposition::Check() {
     std::vector<int> right(n, -1);
 
     for (int i = 0; i < _bags.size(); ++i) {
-        for (int v : _bags[i]) {
+        for (vertex_t v : _bags[i]) {
             sum[v]++;
             left[v] = std::min(left[v], i);
             right[v] = std::max(right[v], i);
@@ -71,9 +79,9 @@ bool PathDecomposition::Check() {
 
     Graph path_g(n);
 
-    for (std::vector<int> bag : _bags) {
-        for (int v : bag) {
-            for (int u : bag) {
+    for (std::vector<vertex_t> bag : _bags) {
+        for (vertex_t v : bag) {
+            for (vertex_t u : bag) {
                 if (u == v) continue;
                 boost::add_edge(u, v, path_g);
             }
@@ -88,6 +96,82 @@ bool PathDecomposition::Check() {
     }
 }
 
-PathDecomposition::PathDecomposition(std::vector<std::vector<int>> bags, Graph g): _bags(bags), _g(g) {
+PathDecomposition::PathDecomposition(std::vector<std::vector<vertex_t>> bags, Graph g): _bags(bags), _g(g) {
     Check();
+}
+
+PathDecomposition::PathDecomposition(Graph g): _g(g) {
+    transform();
+    Check();
+}
+
+void PathDecomposition::transform() {
+    Tree t;
+    BagMap tree_bags = get(treedec::bag_t(), t);
+
+    treedec::comb::PP_FI<Graph> algo(_g);
+    algo.get_tree_decomposition(t);
+
+    int log_n = 0, n = boost::num_vertices(t);
+    while ((1 << log_n) < n) ++log_n;
+    std::vector<std::vector<int>> size(n, std::vector<int>(log_n));
+    // size[v][d] = size of subtree of vertex |v| on depth |d|
+    std::vector<int> used(n);
+    // used[v] = 1 if vertex |v| is already in centroid tree
+    // used[v] = 0 else
+    std::vector<int> parent(n, -1);
+    // parent[v] = parent of vertex |v| in centroid tree
+
+    std::function<void(int, int, int)> size_calculation;
+    size_calculation = [&](tree_vertex v, int depth, tree_vertex p = -1) {
+        size[v][depth] = 1;
+        for (auto item = boost::adjacent_vertices(v, t).first;
+        item != boost::adjacent_vertices(v, t).second;
+        ++item) {
+            tree_vertex u = *item;
+            if (p == u || used[u]) continue;
+            size_calculation(u, depth, v);
+            size[v][depth] += size[u][depth];
+        }
+    };
+
+    std::function<tree_vertex(int, int, int, int)> find_centroid;
+    find_centroid = [&](tree_vertex v, int depth, int n = 0, tree_vertex p = -1) {
+        for (auto item = boost::adjacent_vertices(v, t).first;
+        item != boost::adjacent_vertices(v, t).second;
+        ++item) {
+            vertex_t u = *item;
+            if (p == u || used[u]) continue;
+            if (size[u][depth] >= n / 2) return find_centroid(u, depth, n, v);
+        }
+        return v;
+    };
+
+    std::function<void(int, int, int)> build_cetroid_tree;
+    build_cetroid_tree = [&](tree_vertex v, int depth = 0, int p = -1) {
+        size_calculation(v, depth, -1);
+        tree_vertex c = find_centroid(v, depth, size[v][depth], -1);
+        used[c] = 1;
+        parent[c] = p;
+        int adjacency = 0;
+
+        for (auto item = boost::adjacent_vertices(c, t).first;
+        item != boost::adjacent_vertices(c, t).second;
+        ++item) {
+            tree_vertex u = *item;
+            if (used[u]) continue;
+            adjacency++;
+            build_cetroid_tree(u, depth + 1, c);
+        }
+        if (adjacency == 0) {
+            _bags.push_back({});
+            for (tree_vertex u = c; u != -1; u = parent[u]) {
+                for (vertex_t item : get(tree_bags, u)) {
+                    _bags.back().push_back(item);
+                }
+            }
+        }
+    };
+
+    build_cetroid_tree(0, 0, -1);
 }
