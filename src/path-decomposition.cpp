@@ -7,14 +7,6 @@
 #include <set>
 #include "path-decomposition.h"
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
-typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
-typedef std::set<vertex_t> bag_container_type;
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-        boost::property<treedec::bag_t, bag_container_type>> Tree;
-typedef boost::graph_traits<Tree>::vertex_descriptor tree_vertex;
-typedef boost::property_map<Tree, treedec::bag_t>::type BagMap;
-
 PathDecomposition::CorectnessException::CorectnessException(int error_type): _error_type(error_type) {}
 PathDecomposition::CorectnessException::CorectnessException
         (int i, int j, int k, int u):
@@ -106,11 +98,13 @@ PathDecomposition::PathDecomposition(Graph g): _g(g) {
 }
 
 void PathDecomposition::transform() {
-    Tree t;
-    BagMap tree_bags = get(treedec::bag_t(), t);
+
 
     treedec::comb::PP_FI<Graph> algo(_g);
+    algo.do_it();
+    treedec::graph_traits<Graph>::treedec_type t;
     algo.get_tree_decomposition(t);
+    auto tree_bags = get(treedec::bag_t(), t);
 
     int log_n = 0, n = boost::num_vertices(t);
     while ((1 << log_n) < n) ++log_n;

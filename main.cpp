@@ -2,7 +2,6 @@
 #include "src/path-decomposition.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
     int n = 6;
     std::vector<std::pair<int, int>> edges = {
             {0, 1},
@@ -16,6 +15,10 @@ int main() {
     Graph g(edges.begin(), edges.end(), n);
 
     PathDecomposition q(g);
-    q.
+    for (auto bag: q.get_bags()) {
+        for (auto node : bag) {
+            std::cout << node << std::endl;
+        }
+    }
     return 0;
 }

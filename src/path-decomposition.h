@@ -1,7 +1,9 @@
 #include <vector>
 #include <string>
+#include <set>
 #include <boost/graph/adjacency_list.hpp>
 #include "../tdlib/src/treedec_traits.hpp"
+#include "../tdlib/src/graph_traits.hpp"
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
@@ -55,9 +57,13 @@ public:
     @exceptions throw CorrectnessException if decomposition is not correct
     */
 
-    PathDecomposition(Graph g);
+    explicit PathDecomposition(Graph g);
 //    Calls function |transform|
 //    @exceptions throw CorrectnessException if algorithm works incorrect
+
+    const std::vector<std::vector<vertex_t>>& get_bags() const {
+        return _bags;
+    }
 
 private:
 
