@@ -69,10 +69,18 @@ public:
     }
 
     template<class A>
-    static Tree create_treedec(const Graph g);
+    static Tree create_treedec(Graph g) {
 //    Function creates tree decomposition with tdlib library
 //    @param |A| algorithm from tdlib library(Check them there https://github.com/freetdi/tdlib/tree/4c6109e917e032aaa9ee480de2ce6d1ed5c15305)
+//    @param |g| is graph which will be decomposed
 //    @return tree-decomposition t
+        A algo(g);
+        algo.do_it();
+        Tree t;
+        algo.get_tree_decomposition(t);
+        return t;
+    }
+
 
 private:
 

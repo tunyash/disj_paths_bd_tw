@@ -94,20 +94,7 @@ PathDecomposition::PathDecomposition(Graph g, Tree t): _g(g) {
     Check();
 }
 
-template <class A>
-Tree PathDecomposition::create_treedec(Graph g) {
-    A algo(g);
-    algo.do_it();
-    Tree t;
-    algo.get_tree_decomposition(t);
-    return t;
-}
-
 void PathDecomposition::transform(Tree t) {
-    //A algo(_g);
-    //algo.do_it();
-    //Tree t;
-    //algo.get_tree_decomposition(t);
     auto tree_bags = get(treedec::bag_t(), t);
 
     int log_n = 0, n = boost::num_vertices(t);

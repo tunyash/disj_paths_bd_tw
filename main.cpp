@@ -1,5 +1,6 @@
 #include <iostream>
 #include "src/path-decomposition.h"
+#include "tdlib/src/combinations.hpp"
 
 int main() {
     int n = 6;
@@ -13,12 +14,13 @@ int main() {
     };
 
     Graph g(edges.begin(), edges.end(), n);
-
-    PathDecomposition q(g);
-    for (auto bag: q.get_bags()) {
-        for (auto node : bag) {
-            std::cout << node << std::endl;
-        }
+    bool pass = true;
+    try {
+        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
+        PathDecomposition(g, t);
+    } catch(PathDecomposition::CorectnessException &ex) {
+        pass = false;
+        std::cout << ex.what();
     }
-    return 0;
+    if (pass == 1) exit(1);
 }
