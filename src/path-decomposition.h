@@ -56,13 +56,23 @@ public:
     @exceptions throw CorrectnessException if decomposition is not correct
     */
 
-    explicit PathDecomposition(Graph g);
+    PathDecomposition(Graph g, Tree t);
 //    Calls function |transform|
 //    @exceptions throw CorrectnessException if algorithm works incorrect
 
     const std::vector<std::vector<vertex_t>>& get_bags() const {
         return _bags;
     }
+
+    const Graph& get_graph() const {
+        return _g;
+    }
+
+    template<class A>
+    static Tree create_treedec(const Graph g);
+//    Function creates tree decomposition with tdlib library
+//    @param |A| algorithm from tdlib library(Check them there https://github.com/freetdi/tdlib/tree/4c6109e917e032aaa9ee480de2ce6d1ed5c15305)
+//    @return tree-decomposition t
 
 private:
 
@@ -72,7 +82,7 @@ private:
         @exceptions throw CorrectnessException if decomposition is not correct
     */
 
-    void transform();
+    void transform(Tree t);
     // Function creates path-width decomposition of graph |_g| with tdlib library and centroid-decomposition algorithm
 
 };
