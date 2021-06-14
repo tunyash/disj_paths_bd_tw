@@ -27,6 +27,8 @@ const char *PathDecomposition::CorectnessException::what() const throw() {
                     + "] does not").c_str();
         case VERTICES:
             return "Not all vertices are in path-width decomposition";
+        default:
+            return "";
     }
 }
 
@@ -89,17 +91,20 @@ PathDecomposition::PathDecomposition(std::vector<std::vector<vertex_t>> bags, Gr
     Check();
 }
 
-PathDecomposition::PathDecomposition(Graph g, Tree t): _g(g) {
-    transform(t);
+PathDecomposition::PathDecomposition(Graph g): _g(g) {
+    transform();
     Check();
 }
 
-void PathDecomposition::transform(Tree t) {
-    auto tree_bags = get(treedec::bag_t(), t);
+void PathDecomposition::transform() {
+    Tree t;
 
+    treedec::exact_decomposition_cutset(_g, t);
+
+    auto tree_bags = get(treedec::bag_t(), t);
     int log_n = 0, n = boost::num_vertices(t);
     while ((1 << log_n) < n) ++log_n;
-    std::vector<std::vector<int>> size(n, std::vector<int>(log_n));
+    std::vector<std::vector<int>> size(n, std::vector<int>(log_n + 2));
     // size[v][d] = size of subtree of vertex |v| on depth |d|
     std::vector<int> used(n);
     // used[v] = 1 if vertex |v| is already in centroid tree

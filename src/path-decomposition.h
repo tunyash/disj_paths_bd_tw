@@ -1,13 +1,10 @@
 #include <vector>
 #include <string>
-#include <set>
 #include <boost/graph/adjacency_list.hpp>
 #include "../tdlib/src/treedec_traits.hpp"
-#include "../tdlib/src/graph_traits.hpp"
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
-typedef std::set<vertex_t> bag_container_type;
 typedef treedec::graph_traits<Graph>::treedec_type Tree;
 typedef boost::graph_traits<Tree>::vertex_descriptor tree_vertex;
 
@@ -56,7 +53,7 @@ public:
     @exceptions throw CorrectnessException if decomposition is not correct
     */
 
-    PathDecomposition(Graph g, Tree t);
+    PathDecomposition(Graph g);
 //    Calls function |transform|
 //    @exceptions throw CorrectnessException if algorithm works incorrect
 
@@ -68,19 +65,6 @@ public:
         return _g;
     }
 
-    template<class A>
-    static Tree create_treedec(Graph g) {
-//    Function creates tree decomposition with tdlib library
-//    @param |A| algorithm from tdlib library(Check them there https://github.com/freetdi/tdlib/tree/4c6109e917e032aaa9ee480de2ce6d1ed5c15305)
-//    @param |g| is graph which will be decomposed
-//    @return tree-decomposition t
-        A algo(g);
-        algo.do_it();
-        Tree t;
-        algo.get_tree_decomposition(t);
-        return t;
-    }
-
 
 private:
 
@@ -90,7 +74,7 @@ private:
         @exceptions throw CorrectnessException if decomposition is not correct
     */
 
-    void transform(Tree t);
+    void transform();
     // Function creates path-width decomposition of graph |_g| with tdlib library and centroid-decomposition algorithm
 
 };

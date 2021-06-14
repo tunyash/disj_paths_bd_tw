@@ -1,15 +1,9 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <iostream>
 #include <vector>
-#include <boost/graph/graph_traits.hpp>
-#include <boost/graph/adjacency_list.hpp>
 #include "path-decomposition.h"
 #include "../doctest/doctest/doctest.h"
-#include "../tdlib/src/combinations.hpp"
 #include <random>
-
-
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 
 TEST_CASE("loop") {
     int n = 6;
@@ -25,11 +19,9 @@ TEST_CASE("loop") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
-        PathDecomposition(g, t);
-    } catch(PathDecomposition::CorectnessException &ex) {
+        PathDecomposition p(g);
+    } catch(...) {
         pass = false;
-        std::cout << ex.what();
     }
     CHECK(pass);
 }
@@ -48,8 +40,7 @@ TEST_CASE("binary tree") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
-        PathDecomposition(g, t);
+        PathDecomposition p(g);
     } catch(...) {
         pass = false;
     }
@@ -70,8 +61,7 @@ TEST_CASE("complete graph") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
-        PathDecomposition(g, t);
+        PathDecomposition p(g);
     } catch(...) {
         pass = false;
     }
@@ -85,8 +75,7 @@ TEST_CASE("empty graph") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
-        PathDecomposition(g, t);
+        PathDecomposition p(g);
     } catch(...) {
         pass = false;
     }
@@ -103,8 +92,7 @@ TEST_CASE("not connected graph") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
-        PathDecomposition(g, t);
+        PathDecomposition p(g);
     } catch(...) {
         pass = false;
     }
@@ -131,8 +119,7 @@ TEST_CASE("random graph") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
-        PathDecomposition(g, t);
+        PathDecomposition p(g);
     } catch(...) {
         pass = false;
     }
@@ -151,8 +138,7 @@ TEST_CASE("random tree") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
-        PathDecomposition(g, t);
+        PathDecomposition p(g);
     } catch(...) {
         pass = false;
     }
@@ -162,14 +148,14 @@ TEST_CASE("random tree") {
 TEST_CASE("grid random graph") {
     srand(2281337);
 
-    int n = 20;
+    int n = 15;
     std::vector<int> X = {1, 0};
     std::vector<int> Y = {0, 1};
     std::vector<std::pair<int, int>> edges;
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             for (int go = 0; go < 2; ++go) {
-                if (i + X[go] < n && j + Y[go] < n && rand() % 4) {
+                if (i + X[go] < n && j + Y[go] < n && rand() % 2) {
                     int v = i * n + j, u = (i + X[go]) * n + j + Y[go];
                     edges.push_back(std::make_pair(v, u));
                 }
@@ -180,8 +166,7 @@ TEST_CASE("grid random graph") {
     Graph g(edges.begin(), edges.end(), n * n);
     bool pass = true;
     try {
-        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
-        PathDecomposition(g, t);
+        PathDecomposition p(g);
     } catch(...) {
         pass = false;
     }
@@ -191,7 +176,7 @@ TEST_CASE("grid random graph") {
 TEST_CASE("grid complete graph") {
     srand(2281337);
 
-    int n = 4;
+    int n = 30;
     std::vector<int> X = {1, 0};
     std::vector<int> Y = {0, 1};
     std::vector<std::pair<int, int>> edges;
@@ -209,11 +194,9 @@ TEST_CASE("grid complete graph") {
     Graph g(edges.begin(), edges.end(), n * n);
     bool pass = true;
     try {
-        Tree t = PathDecomposition::create_treedec<treedec::comb::PP_FI<Graph>>(g);
-        PathDecomposition(g, t);
+        PathDecomposition p(g);
     } catch(...) {
         pass = false;
     }
     CHECK(pass);
-    //don't work
 }
