@@ -4,35 +4,35 @@
 #include <set>
 #include "path-decomposition.h"
 
-PathDecomposition::CorectnessException::CorectnessException(int error_type): _error_type(error_type) {}
-PathDecomposition::CorectnessException::CorectnessException
-        (int i, int j, int k, int u):
-        _error_type(INCONTINUITY), _bag_i(i), _bag_j(j), _bag_k(k), _violating_node(u) {}
-
-const char *PathDecomposition::CorectnessException::what() const throw() {
+PathDecomposition::CorectnessException::CorectnessException(int error_type): _error_type(error_type) {
     switch (_error_type) {
         case EDGES:
-            return "Not all edges are in path-width decomposition";
+            msg = "Not all edges are in path-width decomposition";
         case NEGATIVE_VERTICES:
-            return "Vertices in bags are not in [0; |V(_g)|)";
-        case INCONTINUITY:
-            return ("_bags["
-                    + std::to_string(_bag_i)
-                    + "] and _bags["
-                    + std::to_string(_bag_j)
-                    + "] contains "
-                    + std::to_string(_bag_k)
-                    + " but _bags["
-                    + std::to_string(_violating_node)
-                    + "] does not").c_str();
-        case VERTICES:
-            return "Not all vertices are in path-width decomposition";
+            msg = "Vertices in bags are not in [0; |V(_g)|)";
         default:
-            return "";
+            msg = "Not all vertices are in path-width decomposition";
     }
 }
+PathDecomposition::CorectnessException::CorectnessException
+        (int i, int j, int k, int u):
+        _error_type(INCONTINUITY), _bag_i(i), _bag_j(j), _bag_k(k), _violating_node(u) {
+    msg = "_bags["
+          + std::to_string(_bag_i)
+          + "] and _bags["
+          + std::to_string(_bag_j)
+          + "] contains "
+          + std::to_string(_bag_k)
+          + " but _bags["
+          + std::to_string(_violating_node)
+          + "] does not";
+}
 
-void PathDecomposition::Check() {
+const char *PathDecomposition::CorectnessException::what() const throw() {
+    return msg.c_str();
+}
+
+void PathDecomposition::check() {
     int n = boost::num_vertices(_g);
 
     for (std::vector<vertex_t> &bag : _bags) {
@@ -87,13 +87,8 @@ void PathDecomposition::Check() {
     }
 }
 
-PathDecomposition::PathDecomposition(std::vector<std::vector<vertex_t>> bags, Graph g): _bags(bags), _g(g) {
-    Check();
-}
-
-PathDecomposition::PathDecomposition(Graph g): _g(g) {
-    transform();
-    Check();
+PathDecomposition::PathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g): _bags(bags), _g(g) {
+    check();
 }
 
 void PathDecomposition::transform() {

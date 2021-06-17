@@ -145,10 +145,10 @@ TEST_CASE("random tree") {
     CHECK(pass);
 }
 
-TEST_CASE("grid random graph") {
+TEST_CASE("sparse grid") {
     srand(2281337);
 
-    int n = 15;
+    int n = 20;
     std::vector<int> X = {1, 0};
     std::vector<int> Y = {0, 1};
     std::vector<std::pair<int, int>> edges;
@@ -173,10 +173,10 @@ TEST_CASE("grid random graph") {
     CHECK(pass);
 }
 
-TEST_CASE("grid complete graph") {
+TEST_CASE("complete grid") {
     srand(2281337);
 
-    int n = 30;
+    int n = 15;
     std::vector<int> X = {1, 0};
     std::vector<int> Y = {0, 1};
     std::vector<std::pair<int, int>> edges;
