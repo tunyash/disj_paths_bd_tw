@@ -40,7 +40,7 @@ public:
         CorectnessException(int i, int j, int k, int u);
         /*
         This is used only for error_type == 2
-        @error_type == 2 is used when _bags[i] and _bags[k] contains vertex |v| but _bags[j] does not.
+        @error_type == 2 is used when _bags[i] and _bags[k] contains vertex |u| but _bags[j] does not.
         i < j < k
         */
         ~CorectnessException() throw() {}
