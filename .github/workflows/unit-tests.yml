@@ -9,6 +9,6 @@ jobs:
       - uses: lukka/get-cmake@latest
       - run: wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
       - run: tar -xf boost_1_76_0.tar.gz
-      - run: git submodule update --init --checkout --force tdlib
+      - run: git submodule update --checkout --force tdlib
       - uses: lukka/run-cmake@v3.4
       - run: ./ test
