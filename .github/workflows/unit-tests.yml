@@ -11,6 +11,6 @@ jobs:
       - run: tar -xf boost_1_76_0.tar.gz
       - run: pwd
       - run: ls
-      - run: git submodule update --checkout --force tdlib
+      - run: git submodule update --init --checkout --force tdlib
       - uses: lukka/run-cmake@v3.4
       - run: ./ test
