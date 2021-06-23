@@ -1,5 +1,5 @@
 name: unit-test
-on: [push]
+on: [push, pull-request]
 jobs:
   check-path-decomposition:
     runs-on: ubuntu-latest
@@ -7,5 +7,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
       - uses: lukka/get-cmake@latest
+      - run: wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
+      - run: tar -xf boost_1_76_0.tar.gz
+      - run: git submodule update --init --checkout --force tdlib
       - uses: lukka/run-cmake@v3.4
       - run: ./ test
