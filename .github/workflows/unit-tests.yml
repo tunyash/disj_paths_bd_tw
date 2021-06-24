@@ -10,16 +10,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
-          - os: windows-latest
-            triplet: x64-windows
-            vcpkgCommitId: '30124253eecff36bc90f73341edbfb4f845e2a1e'
-            vcpkgPackages: 'sqlite3'
           - os: ubuntu-latest
             triplet: x64-linux
-            vcpkgCommitId: '30124253eecff36bc90f73341edbfb4f845e2a1e'
-            vcpkgPackages: 'sqlite3'
-          - os: macos-latest
-            triplet: x64-osx
             vcpkgCommitId: '30124253eecff36bc90f73341edbfb4f845e2a1e'
             vcpkgPackages: 'sqlite3'
 
@@ -48,7 +40,13 @@ jobs:
       - name: Download boost
         run: wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
       - name: Unzip boost
-        run: tar -xf boost_1_76_0.tar.gz
+        run: |
+          tar -xf boost_1_76_0.tar.gz
+          echo "home:"
+          ls ~
+          echo "current:"
+          ls
+          
       - name: Download tdlib
         run: git submodule update --init --checkout --force tdlib
       - name: Run CMake+Ninja without triplet
