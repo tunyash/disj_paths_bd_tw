@@ -6,11 +6,19 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
-      - uses: lukka/get-cmake@latest
       - run: wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
       - run: tar -xf boost_1_76_0.tar.gz
       - run: pwd
       - run: ls
       - run: git submodule update --init --checkout --force tdlib
+      - uses: lukka/run-vcpkg@v6
+        with:
+          setupOnly: true
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          appendedCacheKey: ${{ hashFiles( '**/vcpkg.json' ) }}
+          vcpkgTriplet: ${{ matrix.triplet }}
+          additionalCachedPaths: ${{ env.buildDir }}/vcpkg_installed
       - uses: lukka/run-cmake@v3.4
+        with:
+           cmakeAppendedArgs: '-GNinja --debug_output' 
       - run: ./ test
