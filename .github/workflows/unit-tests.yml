@@ -57,6 +57,6 @@ jobs:
           buildDirectory: '${{ github.workspace }}'
       - name: Run unit-tests
         run: |
-          chmod +x test
-          ./ test
+           chmod +x '${{ github.workspace }}/test'
+          ./ '${{ github.workspace }}/test'
       
