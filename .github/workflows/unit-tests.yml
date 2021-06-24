@@ -1,7 +1,9 @@
-name: unit-test
-on: [push, pull_request]
+name: unit-tests
+on: [push]
+
 jobs:
-name: ${{ matrix.os }}-hosted-basic
+  job:
+    name: ${{ matrix.os }}-hosted-basic
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -52,5 +54,5 @@ name: ${{ matrix.os }}-hosted-basic
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           useVcpkgToolchainFile: true
           buildWithCMakeArgs: '-- -v'
-          buildDirectory: '${{ runner.workspace }}'
-      - run: ./ test
+          buildDirectory: '${{ github.workspace }}'
+      
