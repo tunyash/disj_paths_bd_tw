@@ -68,21 +68,9 @@ void PathDecomposition::check() {
         }
     }
 
-    Graph path_g(n);
-
-    for (std::vector<vertex_t> bag : _bags) {
-        for (vertex_t v : bag) {
-            for (vertex_t u : bag) {
-                if (u == v) continue;
-                boost::add_edge(u, v, path_g);
-            }
-        }
-    }
-
     for (int v = 0; v < n; ++v) {
         for (auto it = boost::adjacent_vertices(v, _g).first; it != boost::adjacent_vertices(v, _g).second; ++it) {
-            if (std::find(boost::adjacent_vertices(v, path_g).first, boost::adjacent_vertices(v, path_g).second, *it) ==
-                boost::adjacent_vertices(v, path_g).second) throw PathDecomposition::CorectnessException(EDGES);
+            if (left[v] > right[*it] || left[*it] > right[v]) throw PathDecomposition::CorectnessException(EDGES);
         }
     }
 }
