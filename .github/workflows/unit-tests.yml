@@ -56,5 +56,7 @@ jobs:
           buildWithCMakeArgs: '-- -v'
           buildDirectory: '${{ github.workspace }}'
       - name: Run unit-tests
-        run: ./ test
+        run: |
+          chmod +x test
+          ./ test
       
