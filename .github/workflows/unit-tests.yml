@@ -45,6 +45,10 @@ jobs:
         shell: bash
       - name: Prints outputs of run-vcpkg task
         run: echo "'${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}' '${{  steps.runvcpkg.outputs.RUNVCPKG_VCPKG_TRIPLET_OUT }}' "
+      - name: Install boost and tdlib
+        run: wget https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz
+        run: tar -xf boost_1_76_0.tar.gz
+        run: git submodule update --init --checkout --force tdlib
       - name: Run CMake+Ninja without triplet
         uses: lukka/run-cmake@main
         id: runcmake
