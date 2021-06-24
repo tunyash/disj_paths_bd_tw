@@ -42,8 +42,7 @@ jobs:
       - name: Unzip boost
         run: |
           tar -xf boost_1_76_0.tar.gz
-          mv boost_1_76_0 ~
-          
+          mv boost_1_76_0 ~   
       - name: Download tdlib
         run: git submodule update --init --checkout --force tdlib
       - name: Run CMake+Ninja without triplet
@@ -56,4 +55,6 @@ jobs:
           useVcpkgToolchainFile: true
           buildWithCMakeArgs: '-- -v'
           buildDirectory: '${{ github.workspace }}'
+      - name: Run unit-tests
+        run: ./ test
       
