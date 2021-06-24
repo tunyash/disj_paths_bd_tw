@@ -91,6 +91,11 @@ PathDecomposition::PathDecomposition(std::vector<std::vector<vertex_t>> &bags, G
     check();
 }
 
+PathDecomposition::PathDecomposition(Graph &g): _g(g) {
+    transform();
+    check();
+}
+
 void PathDecomposition::transform() {
     Tree t;
 
