@@ -7,7 +7,7 @@ if (WIN32)
     include_directories("C:/boost_1_76_0")
 endif(WIN32)
 if (UNIX)
-    include_directories("*/boost_1_76_0/")
+    include_directories("~/boost_1_76_0/")
 endif(UNIX)
 
 add_executable(disj_paths_bd_tw src/test.cpp)
