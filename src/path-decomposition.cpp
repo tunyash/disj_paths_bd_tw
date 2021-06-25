@@ -120,7 +120,7 @@ void PathDecomposition::transform() {
         ++item) {
             vertex_t u = *item;
             if (p == u || used[u]) continue;
-            if (size[u][depth] > all / 2) return find_centroid(u, depth, n, v);
+            if (size[u][depth] > all / 2) return find_centroid(u, depth, all, v);
         }
         return v;
     };

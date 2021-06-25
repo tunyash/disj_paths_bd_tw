@@ -176,7 +176,7 @@ TEST_CASE("sparse grid") {
 TEST_CASE("complete grid") {
     srand(2281337);
 
-    int n = 15;
+    int n = 10;
     std::vector<int> X = {1, 0};
     std::vector<int> Y = {0, 1};
     std::vector<std::pair<int, int>> edges;
