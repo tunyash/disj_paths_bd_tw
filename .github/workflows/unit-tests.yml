@@ -51,7 +51,7 @@ jobs:
           cmakeListsOrSettingsJson: 'CMakeListsTxtBasic'
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           useVcpkgToolchainFile: true
-          buildWithCMakeArgs: '-- -v --trace'
+          buildWithCMakeArgs: '-- -v'
           buildDirectory: '${{ github.workspace }}'
       - name: Run unit-tests
         run: ./test
