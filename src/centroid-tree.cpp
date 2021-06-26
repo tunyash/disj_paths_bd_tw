@@ -15,11 +15,11 @@ void CentroidTree::check() {
         bool _has_cycle = false;
         int _visited = 0;
 
-        void back_edge(const boost::graph_traits<Tree>::edge_descriptor &e, const Tree &g) {
+        void back_edge(const tree_edge_t &e, const Tree &g) {
             _has_cycle = true;
         }
 
-        void discover_vertex(const tree_vertex &v, const Tree &g) {
+        void discover_vertex(const tree_vertex_t &v, const Tree &g) {
             _visited++;
         }
     };
@@ -43,20 +43,20 @@ void CentroidTree::build() {
     // used[v] = 0 else
 
     std::function<void(int, int, int)> size_calculation;
-    size_calculation = [&](tree_vertex v, int depth, tree_vertex p) {
+    size_calculation = [&](tree_vertex_t v, int depth, tree_vertex_t p) {
         size[v][depth] = 1;
         for (auto item = boost::adjacent_vertices(v, _tree).first;
              item != boost::adjacent_vertices(v, _tree).second;
              ++item) {
-            tree_vertex u = *item;
+            tree_vertex_t u = *item;
             if (p == u || used[u]) continue;
             size_calculation(u, depth, v);
             size[v][depth] += size[u][depth];
         }
     };
 
-    std::function<tree_vertex(int, int, int, int)> find_centroid;
-    find_centroid = [&](tree_vertex v, int depth, int all, tree_vertex p) {
+    std::function<tree_vertex_t(int, int, int, int)> find_centroid;
+    find_centroid = [&](tree_vertex_t v, int depth, int all, tree_vertex_t p) {
         for (auto item = boost::adjacent_vertices(v, _tree).first;
              item != boost::adjacent_vertices(v, _tree).second;
              ++item) {
@@ -68,9 +68,9 @@ void CentroidTree::build() {
     };
 
     std::function<void(int, int, int)> build_cetroid_tree;
-    build_cetroid_tree = [&](tree_vertex v, int depth, tree_vertex p) {
+    build_cetroid_tree = [&](tree_vertex_t v, int depth, tree_vertex_t p) {
         size_calculation(v, depth, -1);
-        tree_vertex c = find_centroid(v, depth, size[v][depth], -1);
+        tree_vertex_t c = find_centroid(v, depth, size[v][depth], -1);
         used[c] = 1;
         _parents[c] = p;
         int adjacency = 0;
@@ -78,7 +78,7 @@ void CentroidTree::build() {
         for (auto item = boost::adjacent_vertices(c, _tree).first;
              item != boost::adjacent_vertices(c, _tree).second;
              ++item) {
-            tree_vertex u = *item;
+            tree_vertex_t u = *item;
             if (used[u]) continue;
             adjacency++;
             build_cetroid_tree(u, depth + 1, c);

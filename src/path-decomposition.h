@@ -6,7 +6,9 @@
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
 typedef treedec::graph_traits<Graph>::treedec_type Tree;
-typedef boost::graph_traits<Tree>::vertex_descriptor tree_vertex;
+typedef boost::graph_traits<Tree>::vertex_descriptor tree_vertex_t;
+typedef boost::graph_traits<Tree>::edge_descriptor tree_edge_t;
+typedef boost::graph_traits<Graph>::edge_descriptor edge_t;
 
 class PathDecomposition {
     std::vector<std::vector<vertex_t>> _bags;
