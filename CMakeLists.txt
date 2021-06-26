@@ -12,13 +12,16 @@ endif(UNIX)
 
 add_executable(disj_paths_bd_tw src/test.cpp)
 add_library(path_dec src/path-decomposition.cpp)
-
-target_link_libraries(disj_paths_bd_tw PUBLIC path_dec)
+add_library(centroid_tree src/centroid-tree.cpp)
 
 add_executable(test src/test.cpp)
 add_test(NAME test0 COMMAND test)
-target_link_libraries(test PUBLIC path_dec)
 
+target_link_libraries(test PUBLIC path_dec)
 add_library(nice_path_dec src/nice-path-decomposition/nice-path-decomposition.cpp)
 add_executable(nice_test src/nice-path-decomposition/test.cpp)
 target_link_libraries(nice_test PUBLIC nice_path_dec path_dec)
+
+target_link_libraries(test PUBLIC centroid_tree)
+target_link_libraries(centroid_tree PUBLIC path_dec)
+

@@ -7,7 +7,7 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Grap
 typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
 typedef treedec::graph_traits<Graph>::treedec_type Tree;
 typedef boost::graph_traits<Tree>::vertex_descriptor tree_vertex;
-
+typedef boost::graph_traits<Graph>::edge_descriptor edge_t;
 
 class PathDecomposition {
 protected:
@@ -83,9 +83,6 @@ protected:
         Function checks correctness of path-width decomposition |_bags| of graph |_g|.
         @exceptions throw CorrectnessException if decomposition is not correct
     */
-
-    void transform();
-    // Function creates path-width decomposition of graph |_g| with tdlib library and centroid-decomposition algorithm
 
 };
 

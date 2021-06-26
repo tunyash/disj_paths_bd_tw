@@ -1,9 +1,9 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <iostream>
 #include <vector>
-#include "path-decomposition.h"
-#include "../doctest/doctest/doctest.h"
 #include <random>
+#include "../doctest/doctest/doctest.h"
+#include "centroid-tree.h"
 
 TEST_CASE("loop") {
     int n = 6;
@@ -19,7 +19,8 @@ TEST_CASE("loop") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        PathDecomposition p(g);
+        CentroidTree c(g);
+        c.get_path_decomposition(g);
     } catch(...) {
         pass = false;
     }
@@ -40,7 +41,8 @@ TEST_CASE("binary tree") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        PathDecomposition p(g);
+        CentroidTree c(g);
+        c.get_path_decomposition(g);
     } catch(...) {
         pass = false;
     }
@@ -61,7 +63,8 @@ TEST_CASE("complete graph") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        PathDecomposition p(g);
+        CentroidTree c(g);
+        c.get_path_decomposition(g);
     } catch(...) {
         pass = false;
     }
@@ -75,7 +78,8 @@ TEST_CASE("empty graph") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        PathDecomposition p(g);
+        CentroidTree c(g);
+        c.get_path_decomposition(g);
     } catch(...) {
         pass = false;
     }
@@ -92,7 +96,8 @@ TEST_CASE("not connected graph") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        PathDecomposition p(g);
+        CentroidTree c(g);
+        c.get_path_decomposition(g);
     } catch(...) {
         pass = false;
     }
@@ -119,7 +124,8 @@ TEST_CASE("random graph") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        PathDecomposition p(g);
+        CentroidTree c(g);
+        c.get_path_decomposition(g);
     } catch(...) {
         pass = false;
     }
@@ -138,7 +144,8 @@ TEST_CASE("random tree") {
     Graph g(edges.begin(), edges.end(), n);
     bool pass = true;
     try {
-        PathDecomposition p(g);
+        CentroidTree c(g);
+        c.get_path_decomposition(g);
     } catch(...) {
         pass = false;
     }
@@ -166,7 +173,8 @@ TEST_CASE("sparse grid") {
     Graph g(edges.begin(), edges.end(), n * n);
     bool pass = true;
     try {
-        PathDecomposition p(g);
+        CentroidTree c(g);
+        c.get_path_decomposition(g);
     } catch(...) {
         pass = false;
     }
@@ -176,7 +184,7 @@ TEST_CASE("sparse grid") {
 TEST_CASE("complete grid") {
     srand(2281337);
 
-    int n = 15;
+    int n = 10;
     std::vector<int> X = {1, 0};
     std::vector<int> Y = {0, 1};
     std::vector<std::pair<int, int>> edges;
@@ -194,7 +202,8 @@ TEST_CASE("complete grid") {
     Graph g(edges.begin(), edges.end(), n * n);
     bool pass = true;
     try {
-        PathDecomposition p(g);
+        CentroidTree c(g);
+        c.get_path_decomposition(g);
     } catch(...) {
         pass = false;
     }
