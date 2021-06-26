@@ -1,7 +1,0 @@
-C:/Users/Kirill/CLionProjects/Treewidth/cmake-build-debug/CMakeFiles/nice_test.dir
-C:/Users/Kirill/CLionProjects/Treewidth/cmake-build-debug/CMakeFiles/path_dec.dir
-C:/Users/Kirill/CLionProjects/Treewidth/cmake-build-debug/CMakeFiles/disj_paths_bd_tw.dir
-C:/Users/Kirill/CLionProjects/Treewidth/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-C:/Users/Kirill/CLionProjects/Treewidth/cmake-build-debug/CMakeFiles/nice_path_dec.dir
-C:/Users/Kirill/CLionProjects/Treewidth/cmake-build-debug/CMakeFiles/test.dir
-C:/Users/Kirill/CLionProjects/Treewidth/cmake-build-debug/CMakeFiles/edit_cache.dir
