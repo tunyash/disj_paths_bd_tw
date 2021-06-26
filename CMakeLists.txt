@@ -16,6 +16,5 @@ add_library(centroid_tree src/centroid-tree.cpp)
 
 add_executable(test src/test.cpp)
 add_test(NAME test0 COMMAND test)
-target_link_libraries(test PUBLIC path_dec)
 target_link_libraries(test PUBLIC centroid_tree)
 target_link_libraries(centroid_tree PUBLIC path_dec)
