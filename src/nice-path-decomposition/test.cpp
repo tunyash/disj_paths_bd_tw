@@ -2,10 +2,14 @@
 //#include "../centroid-tree.h"
 
 int main(){
-    int n = 2;
+    int n = 7;
     std::vector<std::pair<int, int>> edges = {
             {0, 1},
-
+            {0, 2},
+            {1, 3},
+            {1, 4},
+            {2, 5},
+            {2, 6}
     };
 
     Graph g(edges.begin(), edges.end(), n);

@@ -9,7 +9,7 @@ public:
 
     struct Bag {
         bag_types type;
-        vertex_t v;
+        vertex_t v = -1;
         edge_t edge;
 
         Bag(bag_types bag_type, vertex_t v) : type(bag_type), v(v) {}

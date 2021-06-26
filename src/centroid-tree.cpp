@@ -10,26 +10,29 @@ const char * CentroidTree::TreeException::what() const throw() {
 }
 
 void CentroidTree::check() {
+    int n = boost::num_vertices(_tree);
+    std::vector<bool> used(n, false);
+    int visited = 0;
 
-    struct cycle_detector : public boost::dfs_visitor<> {
-        bool _has_cycle = false;
-        int _visited = 0;
+    std::function<bool(vertex_t v, vertex_t p)> dfs;
+    dfs = [&](vertex_t v, vertex_t p) {
+        used[v] = true;
+        ++visited;
 
-        void back_edge(const boost::graph_traits<Tree>::edge_descriptor &e, const Tree &g) {
-            _has_cycle = true;
+        for (auto it = boost::adjacent_vertices(v, _tree).first;
+        it != boost::adjacent_vertices(v, _tree).second;
+        ++it) {
+            vertex_t u = *it;
+            if (p == u) continue;
+            if (used[u]) return false;
+            dfs(u, v);
         }
 
-        void discover_vertex(const tree_vertex &v, const Tree &g) {
-            _visited++;
-        }
+        return true;
     };
 
-    cycle_detector vis;
-    const Tree &t = _tree;
-    boost::depth_first_search(t, visitor(vis));
-
-    if (vis._has_cycle) throw TreeException(_tree);
-    if (vis._visited != boost::num_vertices(_tree)) throw TreeException(_tree);
+    if (!dfs(0, -1)) throw TreeException(_tree);
+    if (visited != n) throw TreeException(_tree);
 }
 
 void CentroidTree::build() {
@@ -43,20 +46,20 @@ void CentroidTree::build() {
     // used[v] = 0 else
 
     std::function<void(int, int, int)> size_calculation;
-    size_calculation = [&](tree_vertex v, int depth, tree_vertex p) {
+    size_calculation = [&](tree_vertex_t v, int depth, tree_vertex_t p) {
         size[v][depth] = 1;
         for (auto item = boost::adjacent_vertices(v, _tree).first;
              item != boost::adjacent_vertices(v, _tree).second;
              ++item) {
-            tree_vertex u = *item;
+            tree_vertex_t u = *item;
             if (p == u || used[u]) continue;
             size_calculation(u, depth, v);
             size[v][depth] += size[u][depth];
         }
     };
 
-    std::function<tree_vertex(int, int, int, int)> find_centroid;
-    find_centroid = [&](tree_vertex v, int depth, int all, tree_vertex p) {
+    std::function<tree_vertex_t(int, int, int, int)> find_centroid;
+    find_centroid = [&](tree_vertex_t v, int depth, int all, tree_vertex_t p) {
         for (auto item = boost::adjacent_vertices(v, _tree).first;
              item != boost::adjacent_vertices(v, _tree).second;
              ++item) {
@@ -68,9 +71,9 @@ void CentroidTree::build() {
     };
 
     std::function<void(int, int, int)> build_cetroid_tree;
-    build_cetroid_tree = [&](tree_vertex v, int depth, tree_vertex p) {
+    build_cetroid_tree = [&](tree_vertex_t v, int depth, tree_vertex_t p) {
         size_calculation(v, depth, -1);
-        tree_vertex c = find_centroid(v, depth, size[v][depth], -1);
+        tree_vertex_t c = find_centroid(v, depth, size[v][depth], -1);
         used[c] = 1;
         _parents[c] = p;
         int adjacency = 0;
@@ -78,7 +81,7 @@ void CentroidTree::build() {
         for (auto item = boost::adjacent_vertices(c, _tree).first;
              item != boost::adjacent_vertices(c, _tree).second;
              ++item) {
-            tree_vertex u = *item;
+            tree_vertex_t u = *item;
             if (used[u]) continue;
             adjacency++;
             build_cetroid_tree(u, depth + 1, c);
@@ -110,7 +113,8 @@ PathDecomposition CentroidTree::get_path_decomposition(Graph &g) {
 
 CentroidTree::CentroidTree(Graph &g) {
     Tree t;
-    treedec::exact_decomposition_cutset(g, t);
+    Graph temp = g;
+    treedec::exact_decomposition_cutset(temp, t);
     *this = CentroidTree(t);
 }
 

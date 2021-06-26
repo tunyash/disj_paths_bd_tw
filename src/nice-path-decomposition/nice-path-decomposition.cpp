@@ -11,7 +11,6 @@ void NicePathDecomposition::set_g(Graph &g) {
 
 NicePathDecomposition::NicePathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g) : PathDecomposition(
         bags, g) {
-    set_g(g);
     nice_transform();
 }
 
@@ -39,13 +38,13 @@ void NicePathDecomposition::nice_transform() {
 
         }
         for (vertex_t v : vertices) {
-            prev_set.insert(v);
             _nice_bags.emplace_back(bag_types::ADD_VERTEX, v);
-
             for (auto it = boost::out_edges(v, _g).first; it != boost::out_edges(v, _g).second; ++it) {
-                if (prev_set.count(it->m_target))
+                vertex_t u = it->m_target;
+                if (prev_set.count(u))
                     _nice_bags.emplace_back(bag_types::ADD_EDGE, *it);
             }
+            prev_set.insert(v);
         }
         prev_bag = bag;
     }
