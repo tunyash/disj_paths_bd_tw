@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include "path-decomposition.h"
+#include <boost/graph/depth_first_search.hpp>
 
 class CentroidTree {
 

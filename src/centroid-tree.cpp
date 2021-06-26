@@ -10,26 +10,29 @@ const char * CentroidTree::TreeException::what() const throw() {
 }
 
 void CentroidTree::check() {
+    int n = boost::num_vertices(_tree);
+    std::vector<bool> used(n, false);
+    int visited = 0;
 
-    struct cycle_detector : public boost::dfs_visitor<> {
-        bool _has_cycle = false;
-        int _visited = 0;
+    std::function<bool(vertex_t v, vertex_t p)> dfs;
+    dfs = [&](vertex_t v, vertex_t p) {
+        used[v] = true;
+        ++visited;
 
-        void back_edge(const tree_edge_t &e, const Tree &g) {
-            _has_cycle = true;
+        for (auto it = boost::adjacent_vertices(v, _tree).first;
+        it != boost::adjacent_vertices(v, _tree).second;
+        ++it) {
+            vertex_t u = *it;
+            if (p == u) continue;
+            if (used[u]) return false;
+            dfs(u, v);
         }
 
-        void discover_vertex(const tree_vertex_t &v, const Tree &g) {
-            _visited++;
-        }
+        return true;
     };
 
-    cycle_detector vis;
-    const Tree &t = _tree;
-    boost::depth_first_search(t, visitor(vis));
-
-    if (vis._has_cycle) throw TreeException(_tree);
-    if (vis._visited != boost::num_vertices(_tree)) throw TreeException(_tree);
+    if (!dfs(0, -1)) throw TreeException(_tree);
+    if (visited != n) throw TreeException(_tree);
 }
 
 void CentroidTree::build() {
