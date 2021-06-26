@@ -6,33 +6,54 @@ class CentroidTree {
 
 private:
     std::vector<vertex_t> _parents;
-    T _tree;
+    Tree _tree;
+    std::vector<vertex_t> _order;
 
     void build();
+    /*
+     * Building centroid tree
+     */
 
     void check();
+    /*
+     * Function checks that graph |_tree| is tree
+     * @exception TreeException is thrown when graph |_tree| is not a tree
+     * */
 
 public:
 
     class TreeException : public std::exception {
-        /*
-         * Thrown when |_tree| is not a tree
-         */
-    private:
+    /*
+     * Thrown when |_tree| is not a tree
+     */
 
-        string msg;
-        /*
-         * |msg| is used in the |what()| fucntion
-         */
     public:
 
-        TreeException();
+        Tree &_t;
+
+        TreeException(Tree &t);
+        /*
+         * @param |t| is graph where a loop was found
+         */
+
+        const char * what() const throw();
     };
 
-    PathDecomposition get_path_decomposition() {
-        /*
-         * @return PathDecomposition of |_tree| with width at most width(_tree) x log(|V(_tree)|)
-         */
-    }
+    CentroidTree(Tree &t);
+    /*
+     * @param |t| is tree-width decomposition of some graph |g|
+     * P.S.: same graph |g| is used in the get_path_decomposition() function
+     */
+
+    CentroidTree(Graph &g);
+    /*
+     * This fucntion uses CentroidTree(Tree &t)
+     * @param |t| is received from |g| by exact_decomposition_cutset algo from tdlib
+     */
+
+    PathDecomposition get_path_decomposition(Graph &g);
+    /*
+    * @return PathDecomposition of |g| with width at most width(_tree) * log(|V(_tree)|)
+    */
 
 };

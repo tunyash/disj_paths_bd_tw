@@ -75,8 +75,5 @@ private:
         @exceptions throw CorrectnessException if decomposition is not correct
     */
 
-    void transform();
-    // Function creates path-width decomposition of graph |_g| with tdlib library and centroid-decomposition algorithm
-
 };
 
