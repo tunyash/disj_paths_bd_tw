@@ -34,6 +34,8 @@ public:
 
     explicit NicePathDecomposition(PathDecomposition pathDecomposition);
 
+    bool is_valid();
+
 private:
     std::vector<Bag> _nice_bags;
 

@@ -58,11 +58,43 @@ void NicePathDecomposition::fill_nice_bags() {
     }
     _nice_bags.resize(sz);
     sz = 0;
-    for (int i = 0; i < _bags.size(); i++) {
+    for (int i = 0; i < _bags.size() + 1; i++) {
         sort(nice_order[i].begin(), nice_order[i].end());
         for (Bag b: nice_order[i]) {
             _nice_bags[sz++] = b;
         }
     }
 
+}
+
+
+bool NicePathDecomposition::is_valid() {
+    int n = _g.m_vertices.size();
+    std::vector<bool> added(n, false);
+    std::vector<bool> removed(n, false);
+    std::map<edge_t, bool> edge_used;
+    for (Bag bag : _nice_bags) {
+        if (bag.type == ADD_VERTEX) added[bag.v] = true;
+        else if (bag.type == REMOVE_VERTEX) removed[bag.v] = true;
+        else edge_used[bag.edge] = true;
+    }
+    for (vertex_t v = 0; v < n; v++) {
+        if (!added[v]) {
+            std::cerr << "vertex " << v << " haven't been added";
+            return false;
+        }
+        if (!removed[v]) {
+            std::cerr << "vertex " << v << " haven't been removed";
+            return false;
+        }
+    }
+
+    for (auto it = boost::edges(_g).first; it != boost::edges(_g).second; it++) {
+        if (!edge_used.count(*it)) {
+            std::cerr << "edge " << it->m_source << ' ' << it->m_target << " haven't been added";
+            return false;
+        }
+    }
+
+    return true;
 }
