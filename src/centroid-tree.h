@@ -32,7 +32,7 @@ public:
 
         Tree &_t;
 
-        TreeException(Tree &t);
+        explicit TreeException(Tree &t);
         /*
          * @param |t| is graph where a loop was found
          */

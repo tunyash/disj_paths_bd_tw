@@ -39,11 +39,12 @@ public:
         @error_type == 1 is used when in |_bags| exists vertex |v| that does not belong to [0; |V(_g)|)
         @error_type == 3 is used when exists vertex |v| that does not belong to |_bags|
         */
-        CorectnessException(int i, int j, int k, int u);
+        CorectnessException(int bag_i, int bag_j, int bag_k, int violating_node);
         /*
         This is used only for error_type == 2
-        @error_type == 2 is used when _bags[i] and _bags[k] contains vertex |u| but _bags[j] does not.
-        i < j < k
+        @error_type == 2 is used when |_bags[bag_i]| and |_bags[bag_k]|
+        contains vertex |violating_node| but _bags[bag_k] does not.
+        bag_i < bag_j < bag_k
         */
         ~CorectnessException() throw() {}
         const char* what() const throw();
