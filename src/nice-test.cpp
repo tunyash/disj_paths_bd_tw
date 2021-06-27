@@ -1,5 +1,4 @@
 #include "nice-path-decomposition.h"
-//#include "../centroid-tree.h"
 
 int main(){
     int n = 7;
