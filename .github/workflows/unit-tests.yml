@@ -54,8 +54,7 @@ jobs:
           buildWithCMakeArgs: '--trace -- -v'
           buildDirectory: '${{ github.workspace }}'
       - name: Run unit-tests
-        run: ./test
-      - name: Run unit-test
-        run: ./nice_test
+        run: ./nice_test ./test
+
 
       
