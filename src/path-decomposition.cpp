@@ -14,8 +14,12 @@ PathDecomposition::CorectnessException::CorectnessException(int error_type): _er
     }
 }
 PathDecomposition::CorectnessException::CorectnessException
-        (int i, int j, int k, int u):
-        _error_type(INCONTINUITY), _bag_i(i), _bag_j(j), _bag_k(k), _violating_node(u) {
+        (int bag_i, int bag_j, int bag_k, int violating_node):
+        _error_type(INCONTINUITY),
+        _bag_i(bag_i),
+        _bag_j(bag_j),
+        _bag_k(bag_k),
+        _violating_node(violating_node) {
     msg = "_bags["
           + std::to_string(_bag_i)
           + "] and _bags["
@@ -44,32 +48,32 @@ void PathDecomposition::check() {
         }
     }
 
-    std::vector<int> sum(n);
-    std::vector<int> left(n, n + 1);
-    std::vector<int> right(n, -1);
+    std::vector<int> containg_bags_count(n);
+    std::vector<int> leftmost_bag(n, n + 1);
+    std::vector<int> rightmost_bag(n, -1);
 
     for (int i = 0; i < _bags.size(); ++i) {
         for (vertex_t v : _bags[i]) {
-            sum[v]++;
-            left[v] = std::min(left[v], i);
-            right[v] = std::max(right[v], i);
+            containg_bags_count[v]++;
+            leftmost_bag[v] = std::min(leftmost_bag[v], i);
+            rightmost_bag[v] = std::max(rightmost_bag[v], i);
         }
     }
 
     for (int i = 0; i < n; ++i) {
-        if (sum[i] == 0) throw PathDecomposition::CorectnessException(VERTICES);
-        if (right[i] - left[i] + 1 != sum[i]) {
-            int j = left[i];
+        if (containg_bags_count[i] == 0) throw PathDecomposition::CorectnessException(VERTICES);
+        if (rightmost_bag[i] - leftmost_bag[i] + 1 != containg_bags_count[i]) {
+            int j = leftmost_bag[i];
             for (;
                     std::find(_bags[j].begin(), _bags[j].end(), i) != _bags[j].end();
                     ++j);
-            throw PathDecomposition::CorectnessException(left[i], j, right[i], i);
+            throw PathDecomposition::CorectnessException(leftmost_bag[i], j, rightmost_bag[i], i);
         }
     }
 
     for (int v = 0; v < n; ++v) {
         for (auto it = boost::adjacent_vertices(v, _g).first; it != boost::adjacent_vertices(v, _g).second; ++it) {
-            if (left[v] > right[*it] || left[*it] > right[v]) throw PathDecomposition::CorectnessException(EDGES);
+            if (leftmost_bag[v] > rightmost_bag[*it] || leftmost_bag[*it] > rightmost_bag[v]) throw PathDecomposition::CorectnessException(EDGES);
         }
     }
 }

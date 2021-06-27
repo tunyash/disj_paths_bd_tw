@@ -40,13 +40,13 @@ public:
         const char * what() const throw();
     };
 
-    CentroidTree(Tree &t);
+    explicit CentroidTree(Tree &t);
     /*
      * @param |t| is tree-width decomposition of some graph |g|
      * P.S.: same graph |g| is used in the get_path_decomposition() function
      */
 
-    CentroidTree(Graph &g);
+    explicit CentroidTree(Graph &g);
     /*
      * This fucntion uses CentroidTree(Tree &t)
      * @param |t| is received from |g| by exact_decomposition_cutset algo from tdlib
