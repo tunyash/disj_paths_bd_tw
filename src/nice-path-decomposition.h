@@ -33,8 +33,10 @@ public:
     // Constructor makes NicePathDecomposition using bags sequence
 
     explicit NicePathDecomposition(PathDecomposition pathDecomposition);
+    // Constructor makes NicePathDecomposition using PathDecomposition
 
-    bool is_valid();
+    bool is_correct();
+    // Function checks is _nice_bags is correct
 
 private:
     std::vector<Bag> _nice_bags;
@@ -42,5 +44,4 @@ private:
     void set_g(Graph &g);
 
     void fill_nice_bags();
-
 };

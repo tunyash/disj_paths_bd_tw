@@ -68,7 +68,7 @@ void NicePathDecomposition::fill_nice_bags() {
 }
 
 
-bool NicePathDecomposition::is_valid() {
+bool NicePathDecomposition::is_correct() {
     int n = _g.m_vertices.size();
     std::vector<bool> added(n, false);
     std::vector<bool> removed(n, false);
