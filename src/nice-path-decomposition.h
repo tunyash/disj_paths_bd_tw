@@ -4,7 +4,7 @@
 class NicePathDecomposition : public PathDecomposition {
     /*
         NicePathDecomposition is a path decomposition but every bag has one of three types: ADD_VERTEX, REMOVE_VERTEX, ADD_EDGE.
-        The porpoise of using it is that it will help to calculate the dynamic.
+        The purpose of using it is that it will help to calculate the dynamic.
     */
 public:
     enum bag_types {
@@ -49,7 +49,7 @@ public:
     };
 
 
-    std::vector<Bag> get_nice_bags();
+    const std::vector<Bag> &get_nice_bags();
 
     NicePathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g);
     // Constructor makes NicePathDecomposition using bags sequence
@@ -58,7 +58,7 @@ public:
     // Constructor makes NicePathDecomposition using PathDecomposition
 
     void is_correct();
-    // Function checks is _nice_bags is correct
+    // Function checks if _nice_bags is correct
 
 private:
     std::vector<Bag> _nice_bags;
