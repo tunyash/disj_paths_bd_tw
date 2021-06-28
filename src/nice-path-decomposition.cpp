@@ -1,7 +1,7 @@
 #include "nice-path-decomposition.h"
 #include "../tdlib/src/iter.hpp"
 
-std::vector<NicePathDecomposition::Bag> NicePathDecomposition::get_nice_bags() {
+const std::vector<NicePathDecomposition::Bag>& NicePathDecomposition::get_nice_bags() {
     return _nice_bags;
 }
 
@@ -56,24 +56,24 @@ bool NicePathDecomposition::Bag::operator<(Bag b) {
 
 void NicePathDecomposition::fill_nice_bags() {
     int n = _g.m_vertices.size();
-    std::vector<int> left(n, n + 1);
-    std::vector<int> right(n, -1);
+    std::vector<int> leftmost_bag(n, n + 1);
+    std::vector<int> rightmost_bag(n, -1);
     for (int i = 0; i < _bags.size(); ++i) {
         for (vertex_t v : _bags[i]) {
-            left[v] = std::min(left[v], i);
-            right[v] = std::max(right[v], i);
+            leftmost_bag[v] = std::min(leftmost_bag[v], i);
+            rightmost_bag[v] = std::max(rightmost_bag[v], i);
         }
     }
     std::vector<std::vector<Bag>> nice_order(_bags.size() + 1);
     int sz = 0;
     for (vertex_t v = 0; v < n; v++) {
-        nice_order[left[v]].emplace_back(bag_types::ADD_VERTEX, v);
-        nice_order[right[v] + 1].emplace_back(bag_types::REMOVE_VERTEX, v);
+        nice_order[leftmost_bag[v]].emplace_back(bag_types::ADD_VERTEX, v);
+        nice_order[rightmost_bag[v] + 1].emplace_back(bag_types::REMOVE_VERTEX, v);
         sz += 2;
     }
     for (auto it = boost::edges(_g).first; it != boost::edges(_g).second; it++) {
         vertex_t v = it->m_source, u = it->m_target;
-        int place = std::max(left[v], left[u]);
+        int place = std::max(leftmost_bag[v], leftmost_bag[u]);
         nice_order[place].emplace_back(bag_types::ADD_EDGE, *it);
         sz++;
     }
