@@ -3,7 +3,7 @@
 #include <set>
 #include "path-decomposition.h"
 
-PathDecomposition::CorectnessException::CorectnessException(int error_type): _error_type(error_type) {
+PathDecomposition::CorectnessException::CorectnessException(int error_type) : _error_type(error_type) {
     switch (_error_type) {
         case EDGES:
             msg = "Not all edges are in path-width decomposition";
@@ -13,6 +13,7 @@ PathDecomposition::CorectnessException::CorectnessException(int error_type): _er
             msg = "Not all vertices are in path-width decomposition";
     }
 }
+
 PathDecomposition::CorectnessException::CorectnessException
         (int bag_i, int bag_j, int bag_k, int violating_node):
         _error_type(INCONTINUITY),
@@ -20,6 +21,7 @@ PathDecomposition::CorectnessException::CorectnessException
         _bag_j(bag_j),
         _bag_k(bag_k),
         _violating_node(violating_node) {
+
     msg = "_bags["
           + std::to_string(_bag_i)
           + "] and _bags["
@@ -78,6 +80,10 @@ void PathDecomposition::check() {
     }
 }
 
-PathDecomposition::PathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g): _bags(bags), _g(g) {
+PathDecomposition::PathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g) : _bags(bags), _g(g) {
     check();
+
 }
+
+
+

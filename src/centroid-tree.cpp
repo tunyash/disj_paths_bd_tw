@@ -113,7 +113,8 @@ PathDecomposition CentroidTree::get_path_decomposition(Graph &g) {
 
 CentroidTree::CentroidTree(Graph &g) {
     Tree t;
-    treedec::exact_decomposition_cutset(g, t);
+    Graph temp = g;
+    treedec::exact_decomposition_cutset(temp, t);
     *this = CentroidTree(t);
 }
 
