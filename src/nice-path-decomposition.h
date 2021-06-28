@@ -17,13 +17,35 @@ public:
         edge_t edge;
 
         Bag(bag_types bag_type, vertex_t v) : type(bag_type), v(v) {}
+        // Constructor for ADD_VERTEX and REMOVE_VERTEX bags
 
         Bag(bag_types bag_type, edge_t edge) : type(bag_type), edge(edge) {}
+        // Constructor for ADD_EDGE bags
 
         Bag() = default;
 
         bool operator<(Bag b);
         // Use it to sort bags
+    };
+
+    enum error_types {
+        MISS_VERTEX, MISS_EDGE, LEFT_VERTEX
+    };
+
+    struct NiceBagsCorrectnessException : public std::exception {
+        // thrown if NicePathDecomposition is incorrect
+    private:
+        std::string msg;
+    public:
+        error_types type;
+
+        NiceBagsCorrectnessException(error_types type, vertex_t v);
+
+        NiceBagsCorrectnessException(edge_t edge);
+
+        ~NiceBagsCorrectnessException() throw() = default;
+
+        const char *what() const throw();
     };
 
 
@@ -35,7 +57,7 @@ public:
     explicit NicePathDecomposition(PathDecomposition pathDecomposition);
     // Constructor makes NicePathDecomposition using PathDecomposition
 
-    bool is_correct();
+    void is_correct();
     // Function checks is _nice_bags is correct
 
 private:

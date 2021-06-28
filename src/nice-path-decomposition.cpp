@@ -12,12 +12,33 @@ void NicePathDecomposition::set_g(Graph &g) {
 NicePathDecomposition::NicePathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g) : PathDecomposition(
         bags, g) {
     fill_nice_bags();
+    is_correct();
 }
 
 
 NicePathDecomposition::NicePathDecomposition(PathDecomposition pathDecomposition) : PathDecomposition(
         pathDecomposition) {
     fill_nice_bags();
+    is_correct();
+}
+
+NicePathDecomposition::NiceBagsCorrectnessException::NiceBagsCorrectnessException(error_types type, vertex_t v) {
+    switch (type) {
+        case MISS_VERTEX:
+            msg = "vertex " + std::to_string(v) + " haven't been added";
+            break;
+        case LEFT_VERTEX:
+            msg = "vertex " + std::to_string(v) + " haven't been deleted";
+            break;
+    }
+}
+
+NicePathDecomposition::NiceBagsCorrectnessException::NiceBagsCorrectnessException(edge_t edge) {
+    msg = "edge " + std::to_string(edge.m_source) + ' ' + std::to_string(edge.m_target) + " haven't been added";
+}
+
+const char *NicePathDecomposition::NiceBagsCorrectnessException::what() const throw() {
+    return msg.c_str();
 }
 
 
@@ -68,7 +89,7 @@ void NicePathDecomposition::fill_nice_bags() {
 }
 
 
-bool NicePathDecomposition::is_correct() {
+void NicePathDecomposition::is_correct() {
     int n = _g.m_vertices.size();
     std::vector<bool> added(n, false);
     std::vector<bool> removed(n, false);
@@ -80,21 +101,17 @@ bool NicePathDecomposition::is_correct() {
     }
     for (vertex_t v = 0; v < n; v++) {
         if (!added[v]) {
-            std::cerr << "vertex " << v << " haven't been added";
-            return false;
+            throw NiceBagsCorrectnessException(MISS_VERTEX, v);
         }
         if (!removed[v]) {
-            std::cerr << "vertex " << v << " haven't been removed";
-            return false;
+            throw NiceBagsCorrectnessException(LEFT_VERTEX, v);
         }
     }
 
     for (auto it = boost::edges(_g).first; it != boost::edges(_g).second; it++) {
         if (!edge_used.count(*it)) {
-            std::cerr << "edge " << it->m_source << ' ' << it->m_target << " haven't been added";
-            return false;
+            throw NiceBagsCorrectnessException(*it);
         }
     }
 
-    return true;
 }
