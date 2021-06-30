@@ -30,19 +30,33 @@ NicePathDecomposition::NicePathDecomposition(PathDecomposition pathDecomposition
     is_correct();
 }
 
-NicePathDecomposition::NiceBagsCorrectnessException::NiceBagsCorrectnessException(error_types type, vertex_t v) {
+NicePathDecomposition::NiceBagsCorrectnessException::NiceBagsCorrectnessException(error_types type, vertex_t v) : type(
+        type) {
     switch (type) {
-        case MISS_VERTEX:
-            msg = "vertex " + std::to_string(v) + " haven't been added";
+        case ADD_VERTEX_E:
+            msg = "vertex " + std::to_string(v) + " haven't been added or added more than one time";
             break;
-        case LEFT_VERTEX:
-            msg = "vertex " + std::to_string(v) + " haven't been deleted";
+        case REMOVE_VERTEX_E:
+            msg = "vertex " + std::to_string(v) + " haven't been deleted or deleted more than one time";
             break;
     }
 }
 
-NicePathDecomposition::NiceBagsCorrectnessException::NiceBagsCorrectnessException(edge_t edge) {
-    msg = "edge " + std::to_string(edge.m_source) + ' ' + std::to_string(edge.m_target) + " haven't been added";
+NicePathDecomposition::NiceBagsCorrectnessException::NiceBagsCorrectnessException(error_types type, edge_t edge) : type(
+        type) {
+    switch (type) {
+        case (MISS_EDGE):
+            msg = "edge " + std::to_string(edge.m_source) + ' ' + std::to_string(edge.m_target) + " haven't been added";
+        case (ADD_EDGE_BEFORE_VERTEX):
+            msg = "edge " + std::to_string(edge.m_source) + ' ' + std::to_string(edge.m_target) +
+                  +" was added in bag without all it's vertices";
+    }
+}
+
+NicePathDecomposition::NiceBagsCorrectnessException::NiceBagsCorrectnessException(error_types type) : type(type) {
+    if (type == EXTRA_EDGE) {
+        msg = "nice_bags have some extra edges";
+    }
 }
 
 const char *NicePathDecomposition::NiceBagsCorrectnessException::what() const throw() {
@@ -99,31 +113,42 @@ void NicePathDecomposition::fill_nice_bags() {
 
 void NicePathDecomposition::is_correct() {
     int n = _g.m_vertices.size();
-    std::vector<bool> added(n, false);
-    std::vector<bool> removed(n, false);
+    std::vector<int> added(n, false);
+    std::vector<int> removed(n, false);
     std::map<std::pair<int, int>, bool> edge_used;
+    int e = 0;
     for (Bag bag : _nice_bags) {
-        if (bag.type == ADD_VERTEX) added[bag.vertex] = true;
-        else if (bag.type == REMOVE_VERTEX) removed[bag.vertex] = true;
-        else {
+        if (bag.type == ADD_VERTEX) added[bag.vertex]++;
+        else if (bag.type == REMOVE_VERTEX) {
+            if (!added[bag.vertex])
+                throw NiceBagsCorrectnessException(REMOVE_BEFORE_ADDING, bag.vertex);
+            removed[bag.vertex]++;
+        } else {
+            e++;
             std::pair<int, int> edge = std::make_pair(bag.edge.m_source, bag.edge.m_target);
             edge_used[edge] = true;
+            if (!added[edge.first] || !added[edge.second] || removed[edge.first] || removed[edge.second]) {
+                throw NiceBagsCorrectnessException(ADD_EDGE_BEFORE_VERTEX, bag.edge);
+            }
         }
     }
     for (vertex_t v = 0; v < n; v++) {
-        if (!added[v]) {
-            throw NiceBagsCorrectnessException(MISS_VERTEX, v);
+        if (added[v] != 1) {
+            throw NiceBagsCorrectnessException(ADD_VERTEX_E, v);
         }
-        if (!removed[v]) {
-            throw NiceBagsCorrectnessException(LEFT_VERTEX, v);
+        if (removed[v] != 1) {
+            throw NiceBagsCorrectnessException(REMOVE_VERTEX_E, v);
         }
     }
 
     for (auto it = boost::edges(_g).first; it != boost::edges(_g).second; it++) {
         std::pair<int, int> edge = std::make_pair(it->m_source, it->m_target);
         if (!edge_used.count(edge)) {
-            throw NiceBagsCorrectnessException(*it);
+            throw NiceBagsCorrectnessException(MISS_EDGE, *it);
         }
+    }
+    if (e > _g.m_edges.size()) {
+        throw NiceBagsCorrectnessException(EXTRA_EDGE);
     }
 }
 

@@ -4,6 +4,7 @@
 #include "../doctest/doctest/doctest.h"
 #include "nice-path-decomposition.h"
 
+
 TEST_CASE("loop") {
     int n = 6;
     std::vector<std::pair<int, int>> edges = {
@@ -42,7 +43,7 @@ TEST_CASE("Constructor check") {
     };
     bool pass = true;
     try {
-        NicePathDecomposition p(nice_bags,g);
+        NicePathDecomposition p(nice_bags, g);
     } catch (...) {
         pass = false;
     }
@@ -139,4 +140,98 @@ TEST_CASE("random tree") {
         pass = false;
     }
     CHECK(pass);
+}
+
+TEST_CASE("NicePathDecomposition exception cathing") {
+    SUBCASE("Double adding") {
+        int n = 2;
+        std::vector<std::pair<int, int>> edges = {
+                {0, 1},
+        };
+        Graph g(edges.begin(), edges.end(), n);
+        std::vector<NicePathDecomposition::Bag> nice_bags = {
+                {NicePathDecomposition::ADD_VERTEX,    0},
+                {NicePathDecomposition::ADD_VERTEX,    1},
+                {*boost::edges(g).first},
+                {NicePathDecomposition::ADD_VERTEX,    1},
+                {NicePathDecomposition::REMOVE_VERTEX, 0},
+                {NicePathDecomposition::REMOVE_VERTEX, 1}
+        };
+        bool pass = false;
+        try {
+            NicePathDecomposition p(nice_bags, g);
+        } catch (NicePathDecomposition::NiceBagsCorrectnessException error) {
+            if(error.type == NicePathDecomposition::ADD_VERTEX_E)
+                pass = true;
+        }
+        CHECK(pass);
+    }
+
+    SUBCASE("Extra edges") {
+        int n = 2;
+        std::vector<std::pair<int, int>> edges = {
+                {0, 1},
+        };
+        Graph g(edges.begin(), edges.end(), n);
+        std::vector<NicePathDecomposition::Bag> nice_bags = {
+                {NicePathDecomposition::ADD_VERTEX,    0},
+                {NicePathDecomposition::ADD_VERTEX,    1},
+                {*boost::edges(g).first},
+                {*boost::edges(g).first},
+                {NicePathDecomposition::REMOVE_VERTEX, 0},
+                {NicePathDecomposition::REMOVE_VERTEX, 1}
+        };
+        bool pass = false;
+        try {
+            NicePathDecomposition p(nice_bags, g);
+        } catch (NicePathDecomposition::NiceBagsCorrectnessException error) {
+            if(error.type == NicePathDecomposition::EXTRA_EDGE)
+                pass = true;
+        }
+        CHECK(pass);
+    }
+    SUBCASE("Remove vertex before adding") {
+        int n = 2;
+        std::vector<std::pair<int, int>> edges = {
+                {0, 1},
+        };
+        Graph g(edges.begin(), edges.end(), n);
+        std::vector<NicePathDecomposition::Bag> nice_bags = {
+                {NicePathDecomposition::ADD_VERTEX,    0},
+                {NicePathDecomposition::REMOVE_VERTEX,    1},
+                {NicePathDecomposition::ADD_VERTEX, 1},
+                {*boost::edges(g).first},
+                {NicePathDecomposition::REMOVE_VERTEX, 0},
+        };
+        bool pass = false;
+        try {
+            NicePathDecomposition p(nice_bags, g);
+        } catch (NicePathDecomposition::NiceBagsCorrectnessException error) {
+            if(error.type == NicePathDecomposition::REMOVE_BEFORE_ADDING)
+                pass = true;
+        }
+        CHECK(pass);
+    }
+    SUBCASE("Adding edge before vertices") {
+        int n = 2;
+        std::vector<std::pair<int, int>> edges = {
+                {0, 1},
+        };
+        Graph g(edges.begin(), edges.end(), n);
+        std::vector<NicePathDecomposition::Bag> nice_bags = {
+                {NicePathDecomposition::ADD_VERTEX,    0},
+                {*boost::edges(g).first},
+                {NicePathDecomposition::ADD_VERTEX,    1},
+                {NicePathDecomposition::REMOVE_VERTEX, 0},
+                {NicePathDecomposition::REMOVE_VERTEX, 1}
+        };
+        bool pass = false;
+        try {
+            NicePathDecomposition p(nice_bags, g);
+        } catch (NicePathDecomposition::NiceBagsCorrectnessException error) {
+            if(error.type == NicePathDecomposition::ADD_EDGE_BEFORE_VERTEX)
+                pass = true;
+        }
+        CHECK(pass);
+    }
 }

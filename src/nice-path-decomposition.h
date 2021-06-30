@@ -19,7 +19,7 @@ public:
         Bag(bag_types bag_type, vertex_t v) : type(bag_type), vertex(v) {}
         // Constructor for ADD_VERTEX and REMOVE_VERTEX bags
 
-        Bag( edge_t edge) : type(ADD_EDGE), edge(edge) {}
+        Bag(edge_t edge) : type(ADD_EDGE), edge(edge) {}
         // Constructor for ADD_EDGE bags
 
         Bag() = default;
@@ -29,7 +29,7 @@ public:
     };
 
     enum error_types {
-        MISS_VERTEX, MISS_EDGE, LEFT_VERTEX
+        ADD_VERTEX_E, REMOVE_VERTEX_E, REMOVE_BEFORE_ADDING, ADD_EDGE_BEFORE_VERTEX, MISS_EDGE, EXTRA_EDGE,
     };
 
     struct NiceBagsCorrectnessException : public std::exception {
@@ -41,7 +41,9 @@ public:
 
         NiceBagsCorrectnessException(error_types type, vertex_t v);
 
-        NiceBagsCorrectnessException(edge_t edge);
+        NiceBagsCorrectnessException(error_types type, edge_t edge);
+
+        NiceBagsCorrectnessException(error_types type);
 
         ~NiceBagsCorrectnessException() throw() = default;
 
