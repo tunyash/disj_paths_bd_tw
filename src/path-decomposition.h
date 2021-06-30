@@ -29,12 +29,17 @@ public:
         Thrown when path-width decomposition is incorrect
         */
     private:
+
         std::string msg;
+
     public:
+
         int _error_type;
         int _bag_i, _bag_j, _bag_k, _violating_node;
+        PathDecomposition *_PD;
+        //_PD is PathDecomposition object which caused exception
 
-        CorectnessException(int error_type);
+        CorectnessException(int error_type, PathDecomposition *PD);
 
         /*
         @error_type == 0 is used when in graph |_g| exists edge (v, u) but in |_bags| there is no bag that contains {v, u}
@@ -42,7 +47,7 @@ public:
         @error_type == 3 is used when exists vertex |v| that does not belong to |_bags|
         */
 
-        CorectnessException(int bag_i, int bag_j, int bag_k, int violating_node);
+        CorectnessException(int bag_i, int bag_j, int bag_k, int violating_node, PathDecomposition *PD);
         /*
         This is used only for error_type == 2
         @error_type == 2 is used when |_bags[bag_i]| and |_bags[bag_k]|

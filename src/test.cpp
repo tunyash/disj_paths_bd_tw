@@ -3,7 +3,9 @@
 #include <vector>
 #include <random>
 #include "../doctest/doctest/doctest.h"
+#define BOOL BOOLTD
 #include "../tdlib/src/combinations.hpp"
+#undef BOOL
 #include "centroid-tree.h"
 #include <set>
 

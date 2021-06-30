@@ -1,6 +1,5 @@
 #include "centroid-tree.h"
 
-
 class NicePathDecomposition : public PathDecomposition {
     /*
         NicePathDecomposition is a path decomposition but every bag has one of three types: ADD_VERTEX, REMOVE_VERTEX, ADD_EDGE.
