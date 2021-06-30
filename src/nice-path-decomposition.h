@@ -13,13 +13,13 @@ public:
 
     struct Bag {
         bag_types type;
-        vertex_t v = -1;
+        vertex_t vertex = -1;
         edge_t edge;
 
-        Bag(bag_types bag_type, vertex_t v) : type(bag_type), v(v) {}
+        Bag(bag_types bag_type, vertex_t v) : type(bag_type), vertex(v) {}
         // Constructor for ADD_VERTEX and REMOVE_VERTEX bags
 
-        Bag(bag_types bag_type, edge_t edge) : type(bag_type), edge(edge) {}
+        Bag( edge_t edge) : type(ADD_EDGE), edge(edge) {}
         // Constructor for ADD_EDGE bags
 
         Bag() = default;
@@ -51,11 +51,16 @@ public:
 
     const std::vector<Bag> &get_nice_bags();
 
+    NicePathDecomposition(std::vector<Bag> &nice_bags, Graph &g);
+
     NicePathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g);
     // Constructor makes NicePathDecomposition using bags sequence
 
     explicit NicePathDecomposition(PathDecomposition pathDecomposition);
     // Constructor makes NicePathDecomposition using PathDecomposition
+
+    static std::vector<std::vector<vertex_t>> convert_nice_bags(std::vector<Bag> nice_bags);
+    // Convert nice_bag to bag sequence
 
     void is_correct();
     // Function checks if _nice_bags is correct

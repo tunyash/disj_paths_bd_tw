@@ -27,6 +27,28 @@ TEST_CASE("loop") {
     CHECK(pass);
 }
 
+TEST_CASE("Constructor check") {
+    int n = 2;
+    std::vector<std::pair<int, int>> edges = {
+            {0, 1},
+    };
+    Graph g(edges.begin(), edges.end(), n);
+    std::vector<NicePathDecomposition::Bag> nice_bags = {
+            {NicePathDecomposition::ADD_VERTEX,    0},
+            {NicePathDecomposition::ADD_VERTEX,    1},
+            {*boost::edges(g).first},
+            {NicePathDecomposition::REMOVE_VERTEX, 0},
+            {NicePathDecomposition::REMOVE_VERTEX, 1}
+    };
+    bool pass = true;
+    try {
+        NicePathDecomposition p(nice_bags,g);
+    } catch (...) {
+        pass = false;
+    }
+    CHECK(pass);
+}
+
 TEST_CASE("binary tree") {
     int n = 7;
     std::vector<std::pair<int, int>> edges = {
@@ -43,7 +65,7 @@ TEST_CASE("binary tree") {
     try {
         CentroidTree c(g);
         NicePathDecomposition p(c.get_path_decomposition(g));
-    } catch(...) {
+    } catch (...) {
         pass = false;
     }
     CHECK(pass);
@@ -65,14 +87,14 @@ TEST_CASE("complete graph") {
     try {
         CentroidTree c(g);
         NicePathDecomposition p(c.get_path_decomposition(g));
-    } catch(...) {
+    } catch (...) {
         pass = false;
     }
     CHECK(pass);
 }
 
 TEST_CASE("random graph") {
-    srand(1000-7);
+    srand(1000 - 7);
 
     int n = 15;
     std::vector<std::pair<int, int>> edges;
@@ -93,14 +115,14 @@ TEST_CASE("random graph") {
     try {
         CentroidTree c(g);
         NicePathDecomposition p(c.get_path_decomposition(g));
-    } catch(...) {
+    } catch (...) {
         pass = false;
     }
     CHECK(pass);
 }
 
 TEST_CASE("random tree") {
-    srand(1000-7);
+    srand(1000 - 7);
 
     int n = rand() % 100;
     std::vector<std::pair<int, int>> edges;
@@ -113,7 +135,7 @@ TEST_CASE("random tree") {
     try {
         CentroidTree c(g);
         NicePathDecomposition p(c.get_path_decomposition(g));
-    } catch(...) {
+    } catch (...) {
         pass = false;
     }
     CHECK(pass);

@@ -3,6 +3,7 @@
 #include <set>
 #include "path-decomposition.h"
 
+
 PathDecomposition::CorectnessException::CorectnessException(int error_type) : _error_type(error_type) {
     switch (_error_type) {
         case EDGES:
@@ -15,7 +16,7 @@ PathDecomposition::CorectnessException::CorectnessException(int error_type) : _e
 }
 
 PathDecomposition::CorectnessException::CorectnessException
-        (int bag_i, int bag_j, int bag_k, int violating_node):
+        (int bag_i, int bag_j, int bag_k, int violating_node) :
         _error_type(INCONTINUITY),
         _bag_i(bag_i),
         _bag_j(bag_j),
@@ -75,15 +76,17 @@ void PathDecomposition::check() {
 
     for (int v = 0; v < n; ++v) {
         for (auto it = boost::adjacent_vertices(v, _g).first; it != boost::adjacent_vertices(v, _g).second; ++it) {
-            if (leftmost_bag[v] > rightmost_bag[*it] || leftmost_bag[*it] > rightmost_bag[v]) throw PathDecomposition::CorectnessException(EDGES);
+            if (leftmost_bag[v] > rightmost_bag[*it] || leftmost_bag[*it] > rightmost_bag[v])
+                throw PathDecomposition::CorectnessException(EDGES);
         }
     }
 }
 
 PathDecomposition::PathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g) : _bags(bags), _g(g) {
     check();
-
 }
+
+PathDecomposition::PathDecomposition() {};
 
 
 
