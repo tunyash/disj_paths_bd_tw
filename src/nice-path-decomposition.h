@@ -52,6 +52,7 @@ public:
         const char *what() const throw();
     };
 
+    void enumerate(std::vector<vertex_t> &U);
 
     const std::vector<Bag> &get_nice_bags();
 

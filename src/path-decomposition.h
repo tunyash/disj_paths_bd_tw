@@ -83,7 +83,10 @@ public:
 
     void enumerate(std::vector<vertex_t> &U);
     /*
+     * This function sorts U and assign and change vertex |i| to vertex |U[i]|
      * Check out fucntion in composed-graph.h get_good_subgraph
+     * Also check composed-test.cpp to
+     * It is not recommended to use this function without get_good_subgraph
      */
 
 protected:
