@@ -84,7 +84,15 @@ PathDecomposition::PathDecomposition(std::vector<std::vector<vertex_t>> &bags, G
     check();
 }
 
-PathDecomposition::PathDecomposition() {};
+void PathDecomposition::enumerate(std::vector<vertex_t> &U) {
+    sort(U.begin(), U.end());
+    U.resize(std::unique(U.begin(), U.end()) - U.begin());
+    for (auto &bag : _bags) {
+        for (auto &item : bag) {
+            item = U[item];
+        }
+    }
+}
 
 
 

@@ -2,7 +2,10 @@
 #include <vector>
 #include <random>
 #include "../doctest/doctest/doctest.h"
+#include "path-decomposition.h"
 #include "nice-path-decomposition.h"
+#include "composed-graph.h"
+#include "centroid-tree.h"
 
 
 TEST_CASE("loop") {

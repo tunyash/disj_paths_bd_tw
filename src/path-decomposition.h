@@ -3,6 +3,9 @@
 #include <boost/graph/adjacency_list.hpp>
 #include "../tdlib/src/treedec_traits.hpp"
 
+#ifndef PATH_DECOMPOSITION_H
+#define PATH_DECOMPOSITION_H
+
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
 typedef treedec::graph_traits<Graph>::treedec_type Tree;
@@ -67,11 +70,8 @@ public:
     @exceptions throw CorrectnessException if decomposition is not correct
     */
 
-    PathDecomposition(Graph &g);
-
-    PathDecomposition();
-//    Calls function |transform|
-//    @exceptions throw CorrectnessException if algorithm works incorrect
+    PathDecomposition() = default;
+//
 
     const std::vector<std::vector<vertex_t>> &get_bags() const {
         return _bags;
@@ -81,6 +81,10 @@ public:
         return _g;
     }
 
+    void enumerate(std::vector<vertex_t> &U);
+    /*
+     * Check out fucntion in composed-graph.h get_good_subgraph
+     */
 
 protected:
 
@@ -93,3 +97,4 @@ protected:
 
 };
 
+#endif

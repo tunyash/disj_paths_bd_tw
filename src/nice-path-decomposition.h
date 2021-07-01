@@ -1,5 +1,8 @@
 #include "centroid-tree.h"
 
+#ifndef NICE_PATH_DECOMPOSITION_H
+#define NICE_PATH_DECOMPOSITION_H
+
 class NicePathDecomposition : public PathDecomposition {
     /*
         NicePathDecomposition is a path decomposition but every bag has one of three types: ADD_VERTEX, REMOVE_VERTEX, ADD_EDGE.
@@ -52,6 +55,8 @@ public:
 
     const std::vector<Bag> &get_nice_bags();
 
+    NicePathDecomposition() = default;
+
     NicePathDecomposition(std::vector<Bag> &nice_bags, Graph &g);
 
     NicePathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g);
@@ -73,3 +78,5 @@ private:
 
     void fill_nice_bags();
 };
+
+#endif

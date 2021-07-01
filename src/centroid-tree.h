@@ -3,6 +3,9 @@
 #include "path-decomposition.h"
 #include <boost/graph/depth_first_search.hpp>
 
+#ifndef CENTROID_TREE_H
+#define CENTROID_TREE_H
+
 class CentroidTree {
 
 private:
@@ -58,3 +61,5 @@ public:
     */
 
 };
+
+#endif

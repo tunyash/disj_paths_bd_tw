@@ -56,7 +56,9 @@ const char * ComposedGraph::CorrectnessException::what() const throw() {
     return _msg.c_str();
 }
 
-NicePathDecomposition ComposedGraph::get_path_decomposition() {
+NicePathDecomposition ComposedGraph::get_path_decomposition(NicePathDecomposition &pw_compressed) {
+    _pw_compressed = pw_compressed;
+
     std::vector<bool> used(boost::num_vertices(_G), false);
     std::vector<NicePathDecomposition::Bag> G_path_decomp;
 
@@ -66,19 +68,53 @@ NicePathDecomposition ComposedGraph::get_path_decomposition() {
             if (in_bag.type == NicePathDecomposition::ADD_VERTEX) {
                 if (used[in_bag.vertex]) continue;
                 G_path_decomp.push_back(NicePathDecomposition::Bag
-                (in_bag.type, in_bag.vertex));
+                                                (in_bag.type, in_bag.vertex));
 
                 G_path_decomp.push_back(NicePathDecomposition::Bag
-                (in_bag.type, _matchings[in_bag.vertex]));
+                                                (in_bag.type, _matchings[in_bag.vertex]));
 
                 G_path_decomp.push_back(NicePathDecomposition::Bag
-                (boost::edge(in_bag.vertex, _matchings[in_bag.vertex], _G).first));
-            }
-            if (in_bag.type == NicePathDecomposition::ADD_EDGE) {
+                                                (boost::edge(in_bag.vertex, _matchings[in_bag.vertex], _G).first));
+            } else {
                 G_path_decomp.push_back(in_bag);
             }
         }
     }
 
     return NicePathDecomposition(G_path_decomp, _G);
+}
+
+ComposedGraph::ComposedGraph(Graph &G,
+                             std::vector<std::vector<vertex_t>> &U,
+                             std::vector<NicePathDecomposition> &pw_u) :
+                             _U(U), _pw_u(pw_u), _G(G) {
+    check();
+}
+
+Graph ComposedGraph::get_compressed_graph() {
+    Graph __G__(_U.size());
+    for (auto item = boost::edges(_G).first; item != boost::edges(_G).second; ++item) {
+        if (_id_U[boost::source(*item, _G)] == _id_U[boost::target(*item, _G)]) continue;
+        if (boost::edge(_id_U[boost::source(*item, _G)], _id_U[boost::target(*item, _G)], __G__).second) continue;
+        boost::add_edge(_id_U[boost::source(*item, _G)], _id_U[boost::target(*item, _G)], __G__);
+    }
+    return __G__;
+}
+
+Graph get_good_subgraph(Graph &g, std::vector<vertex_t> &U) {
+    std::sort(U.begin(), U.end());
+    U.resize(std::unique(U.begin(), U.end()) - U.begin());
+    if (U.back() > boost::num_vertices(g)) throw std::out_of_range("Too big vertices");
+
+    Graph res(U.size());
+
+    for (auto item = boost::edges(g).first; item != boost::edges(g).second; ++item) {
+        int pos_src = std::lower_bound(U.begin(), U.end(), boost::source(*item, g)) - U.begin();
+        int pos_trg = std::lower_bound(U.begin(), U.end(), boost::target(*item, g)) - U.begin();
+        if (pos_src == U.size() || pos_trg == U.size()) continue;
+        if (U[pos_src] != boost::source(*item, g) || U[pos_trg] != boost::target(*item, g)) continue;
+        boost::add_edge(pos_src, pos_trg, res);
+    }
+
+    return res;
 }

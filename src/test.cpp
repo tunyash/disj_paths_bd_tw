@@ -6,8 +6,10 @@
 #define BOOL BOOLTD
 #include "../tdlib/src/combinations.hpp"
 #undef BOOL
+#include "path-decomposition.h"
+#include "nice-path-decomposition.h"
+#include "composed-graph.h"
 #include "centroid-tree.h"
-#include <set>
 
 TEST_CASE("tests for centroid-tree.h and tdlib.h") {
     SUBCASE("loop") {

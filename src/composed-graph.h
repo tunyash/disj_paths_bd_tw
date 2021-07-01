@@ -3,40 +3,45 @@
 #include <string>
 #include <vector>
 
+#ifndef COMPOSED_GRAPH_H
+#define COMPOSED_GRAPH_H
+
 class ComposedGraph {
     /*
-     * Def: ComposedGraph is a graph G that has a set U of sets of vertices of G.
+     * Def: ComposedGraph is a graph G that has a set U of sets U[i] of vertices of G.
      * Def: edge (v, u) is OUTER if v is in U[i] and u is in U[j] and i != j
      * Rule: Union of sets U[i] = V(G) for i = 0...|V| - 1
      * Rule: Intersection of U[i] and U[j] is empty for all i != j
      * Rule: Vertex is adjacent to 0 or 1 outer edges
      *
      * Def: Compressed graph is a graph __G__ formed from graph G
-     * Def: __G__ has |U| vertices
-     * Def: Edge (i, j) is in __G__ if in G exists outer edge (v, u) such that v in U[i] and u in U[j]
+     * Rule: __G__ has |U| vertices
+     * Rule: Edge (i, j) is in __G__ if in G exists outer edge (v, u) such that v in U[i] and u in U[j]
      *
-     * Purpose of this class is to create fast way to provide path-width decomposition of a big graph
+     * Purpose of this class is to create fast way to provide path-width decomposition of this graph
      */
 
 public:
 
     ComposedGraph(Graph &G, std::vector<std::vector<vertex_t>> &U,
-                  std::vector<NicePathDecomposition> &pw_u,
-                  NicePathDecomposition &pw_compressed);
+                  std::vector<NicePathDecomposition> &pw_u);
     /*
      * @param |G| is graph G in the description
      * @param |U| is set U in the description
      * @param |pw_for_u| is a set of NicePathDecomposition
      * |pw_u[i]| is NicePathDecomposition of subgraph G[U[i]]
-     * |pw_comp_graph| is NicePathDecomposition of compressed graph __G__
      */
 
-    NicePathDecomposition get_path_decomposition();
+    NicePathDecomposition get_path_decomposition(NicePathDecomposition &pw_compressed);
     /*
+     * @|pw_comp_graph| is NicePathDecomposition of compressed graph __G__
      * @return NicePathDecomposition of graph G
      */
 
-private:
+    Graph get_compressed_graph();
+    /*
+     * Function returns compressed graph __G__ of graph _G
+     */
 
     class CorrectnessException : public std::exception {
 
@@ -91,13 +96,25 @@ private:
 
     };
 
+
+private:
+
     void check();
 
     std::vector<vertex_t> _matchings;
     std::vector<vertex_t> _id_U;
     Graph _G;
-    std::vector<std::vector<int>> _U;
+    std::vector<std::vector<vertex_t>> _U;
     std::vector<NicePathDecomposition> _pw_u;
     NicePathDecomposition _pw_compressed;
 
 };
+
+Graph get_good_subgraph(Graph &g, std::vector<vertex_t> &U_i);
+/*
+ * returning Graph is isomorphic to subgraph g[U_i] but have vertices from 0 to |U| - 1
+ * This is used to create PathDecomposition from subgraph g[U]
+ * Function that rollbacks vertices indexes is PathDecomposition::enumerate()
+*/
+
+#endif
