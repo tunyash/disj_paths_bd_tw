@@ -145,7 +145,9 @@ void NicePathDecomposition::is_correct() {
     }
 
     for (auto it = boost::edges(_g).first; it != boost::edges(_g).second; it++) {
-        std::pair<int, int> edge = std::make_pair(it->m_source, it->m_target);
+        vertex_t v = it->m_source, u = it->m_target;
+        if(v > u) std::swap(v,u);
+        std::pair<int, int> edge = std::make_pair(v, u);
         if (!edge_used.count(edge)) {
             throw NiceBagsCorrectnessException(MISS_EDGE, *it);
         }
