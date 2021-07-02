@@ -128,7 +128,7 @@ void NicePathDecomposition::is_correct() {
             vertex_t v = bag.edge.m_source, u = bag.edge.m_target;
             if (v > u) std::swap(v, u);
             std::pair<int, int> edge = std::make_pair(v, u);
-            if(edge_used[edge]) throw NiceBagsCorrectnessException(EXTRA_EDGE);
+            if (edge_used[edge]) throw NiceBagsCorrectnessException(EXTRA_EDGE);
             edge_used[edge] = true;
             if (!added[edge.first] || !added[edge.second] || removed[edge.first] || removed[edge.second]) {
                 throw NiceBagsCorrectnessException(ADD_EDGE_BEFORE_VERTEX, bag.edge);
@@ -145,7 +145,9 @@ void NicePathDecomposition::is_correct() {
     }
 
     for (auto it = boost::edges(_g).first; it != boost::edges(_g).second; it++) {
-        std::pair<int, int> edge = std::make_pair(it->m_source, it->m_target);
+        vertex_t v = it->m_source, u = it->m_target;
+        if (v > u) std::swap(v, u);
+        std::pair<int, int> edge = std::make_pair(v, u);
         if (!edge_used.count(edge)) {
             throw NiceBagsCorrectnessException(MISS_EDGE, *it);
         }
