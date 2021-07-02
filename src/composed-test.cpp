@@ -1,4 +1,4 @@
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+//#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include <iostream>
 #include <vector>
 #include "../doctest/doctest/doctest.h"
@@ -19,7 +19,7 @@ std::set<std::pair<vertex_t, vertex_t>> get_set_edges(Graph &g) {
     return res;
 }
 
-TEST_CASE("get_good_subgraph fucntion") {
+TEST_CASE("get_good_subgraph") {
     SUBCASE("Binary tree") {
         int n = 7;
         std::vector<std::pair<int, int>> edges = {
@@ -88,6 +88,7 @@ TEST_CASE("Constructor ComposedGraph exceptions") {
             ComposedGraph CG(g, U, NPD);
         } catch(ComposedGraph::CorrectnessException ex) {
             pass = true;
+            std::cerr << ex.what() << "\n";
         }
         CHECK(pass);
     } SUBCASE("Non empty intersection exception") {
@@ -109,6 +110,7 @@ TEST_CASE("Constructor ComposedGraph exceptions") {
             ComposedGraph CG(g, U, NPD);
         } catch(ComposedGraph::CorrectnessException ex) {
             pass = true;
+            std::cerr << ex.what() << "\n";
         }
         CHECK(pass);
     } SUBCASE("Outer edges exception") {
@@ -130,6 +132,111 @@ TEST_CASE("Constructor ComposedGraph exceptions") {
             ComposedGraph CG(g, U, NPD);
         } catch(ComposedGraph::CorrectnessException ex) {
             pass = true;
+            std::cerr << ex.what() << "\n";
+        }
+        CHECK(pass);
+    }
+}
+
+TEST_CASE("CompressedGraph") {
+    SUBCASE("Simple graph") {
+        int n = 4;
+        std::vector<std::pair<int, int>> edges = {
+                {0, 1}, {2, 3},
+                {0, 3}, {1, 2}
+        };
+        Graph g(edges.begin(), edges.end(), n);
+
+        int m = 2;
+        std::set<std::pair<vertex_t, vertex_t>> need_edges = {
+                {0, 1}
+        };
+
+        std::vector<std::vector<vertex_t>> U = {{0, 1}, {2, 3}};
+        std::vector<NicePathDecomposition> NPD(7);
+        ComposedGraph CG(g, U, NPD);
+        Graph res = CG.get_compressed_graph();
+        CHECK(get_set_edges(res) == need_edges);
+        CHECK(boost::num_vertices(res) == m);
+    } SUBCASE("Matching") {
+        int n = 6;
+        std::vector<std::pair<int, int>> edges = {
+                {0, 5}, {1, 3},
+                {2, 4}
+        };
+        Graph g(edges.begin(), edges.end(), n);
+
+        int m = 6;
+        std::set<std::pair<vertex_t, vertex_t>> need_edges = {
+                {0, 5}, {1, 3}, {2, 4}
+        };
+
+        std::vector<std::vector<vertex_t>> U = {{0}, {1}, {2}, {3}, {4}, {5}};
+        std::vector<NicePathDecomposition> NPD(7);
+        ComposedGraph CG(g, U, NPD);
+        Graph res = CG.get_compressed_graph();
+        CHECK(get_set_edges(res) == need_edges);
+        CHECK(boost::num_vertices(res) == m);
+    } SUBCASE("Empty graph") {
+        int n = 0;
+        std::vector<std::pair<int, int>> edges = {
+        };
+        Graph g(edges.begin(), edges.end(), n);
+
+        int m = 0;
+        std::set<std::pair<vertex_t, vertex_t>> need_edges = {
+        };
+
+        std::vector<std::vector<vertex_t>> U = {};
+        std::vector<NicePathDecomposition> NPD(0);
+        ComposedGraph CG(g, U, NPD);
+        Graph res = CG.get_compressed_graph();
+        CHECK(get_set_edges(res) == need_edges);
+        CHECK(boost::num_vertices(res) == m);
+    }
+}
+
+std::vector<NicePathDecomposition> get_path_dec_U(Graph &g, std::vector<std::vector<vertex_t>> &U) {
+    std::vector<NicePathDecomposition> res;
+    for (auto _set : U) {
+        Graph ng = get_good_subgraph(g, _set);
+        CentroidTree CT(ng);
+        auto PD = CT.get_path_decomposition(ng);
+        res.push_back(NicePathDecomposition(PD));
+        res.back().enumerate(_set);
+    }
+    return res;
+}
+
+NicePathDecomposition get_path_dec_comp(ComposedGraph &CG) {
+    Graph compressed = CG.get_compressed_graph();
+    CentroidTree CT(compressed);
+    return NicePathDecomposition(CT.get_path_decomposition(compressed));
+}
+
+void perform_path_dec(Graph &g, std::vector<std::vector<vertex_t>> &U) {
+    auto pw_u = get_path_dec_U(g, U);
+    ComposedGraph CG(g, U, pw_u);
+    auto pw_comp = get_path_dec_comp(CG);
+    CG.get_path_decomposition(pw_comp);
+}
+
+TEST_CASE("ComposedGraph::get_path_decomposition()") {
+    SUBCASE("Loop") {
+        int n = 6;
+        std::vector<std::pair<vertex_t, vertex_t>> edges = {
+                {0, 1}, {0, 2}, {2, 3},
+                {3, 5}, {5, 4}, {4, 1}
+        };
+        Graph g(edges.begin(), edges.end(), n);
+        std::vector<std::vector<vertex_t>> U = {
+                {0, 1}, {2, 3}, {4, 5}
+        };
+        bool pass = 1;
+        try {
+            perform_path_dec(g, U);
+        } catch(...) {
+            pass = 0;
         }
         CHECK(pass);
     }

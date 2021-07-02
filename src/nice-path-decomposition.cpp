@@ -175,3 +175,20 @@ std::vector<std::vector<vertex_t>> NicePathDecomposition::convert_nice_bags(std:
     }
     return bags;
 }
+
+void NicePathDecomposition::enumerate(std::vector <vertex_t> &U) {
+    sort(U.begin(), U.end());
+    U.resize(std::unique(U.begin(), U.end()) - U.begin());
+    for (auto &bag : _bags) {
+        for (auto &vertex : bag) {
+            vertex = U[vertex];
+        }
+    }
+    for (auto &bag : _nice_bags) {
+        if (bag.type != ADD_EDGE) bag.vertex = U[bag.vertex];
+        else {
+            bag.edge.m_source = U[bag.edge.m_source];
+            bag.edge.m_target = U[bag.edge.m_target];
+        }
+    }
+}

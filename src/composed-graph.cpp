@@ -37,7 +37,7 @@ _G(G), _outer_vertex(outer_vertex) {
 
 ComposedGraph::CorrectnessException::CorrectnessException(ComposedGraph *G, int U_i, int U_j, vertex_t common_vertex):
 _G(G), _U_i(U_i), _U_j(U_j), _common_vertex(common_vertex) {
-    _msg = "|U[_U_i]| and |U[_U_j]| have common vertex |_common_vertex|";
+    _msg = "|_G.U[_U_i]| and |_G.U[_U_j]| have common vertex |_common_vertex|";
 }
 
 ComposedGraph::CorrectnessException::CorrectnessException(vertex_t matching_vertex,
@@ -57,6 +57,7 @@ const char * ComposedGraph::CorrectnessException::what() const throw() {
 }
 
 NicePathDecomposition ComposedGraph::get_path_decomposition(NicePathDecomposition &pw_compressed) {
+    int n = boost::num_vertices(_G);
     _pw_compressed = pw_compressed;
 
     std::vector<bool> used(boost::num_vertices(_G), false);
@@ -70,8 +71,13 @@ NicePathDecomposition ComposedGraph::get_path_decomposition(NicePathDecompositio
                 G_path_decomp.push_back(NicePathDecomposition::Bag
                                                 (in_bag.type, in_bag.vertex));
 
+                used[in_bag.vertex] = true;
+
+                if (_matchings[in_bag.vertex] >= n) continue;
                 G_path_decomp.push_back(NicePathDecomposition::Bag
                                                 (in_bag.type, _matchings[in_bag.vertex]));
+
+                used[_matchings[in_bag.vertex]] = true;
 
                 G_path_decomp.push_back(NicePathDecomposition::Bag
                                                 (boost::edge(in_bag.vertex, _matchings[in_bag.vertex], _G).first));
