@@ -38,7 +38,8 @@ TEST_CASE("get_good_subgraph") {
         Graph res = get_good_subgraph(g, U);
         CHECK(get_set_edges(res) == need_edges);
         CHECK(boost::num_vertices(res) == m);
-    } SUBCASE("Exception check") {
+    }
+    SUBCASE("Exception check") {
         Graph g;
         std::vector<vertex_t> U = {27, 31};
         bool pass = false;
@@ -48,7 +49,8 @@ TEST_CASE("get_good_subgraph") {
             pass = true;
         }
         CHECK(pass);
-    } SUBCASE("No edges in subgraph") {
+    }
+    SUBCASE("No edges in subgraph") {
         int n = 7;
         std::vector<std::pair<int, int>> edges = {
                 {0, 1}, {0, 2},
@@ -91,7 +93,8 @@ TEST_CASE("Constructor ComposedGraph exceptions") {
             std::cerr << ex.what() << "\n";
         }
         CHECK(pass);
-    } SUBCASE("Non empty intersection exception") {
+    }
+    SUBCASE("Non empty intersection exception") {
         int n = 6;
         std::vector<std::pair<int, int>> edges = {
                 {0, 1}, {1, 2}, {0, 2},
@@ -113,7 +116,8 @@ TEST_CASE("Constructor ComposedGraph exceptions") {
             std::cerr << ex.what() << "\n";
         }
         CHECK(pass);
-    } SUBCASE("Outer edges exception") {
+    }
+    SUBCASE("Outer edges exception") {
         int n = 6;
         std::vector<std::pair<int, int>> edges = {
                 {0, 1}, {1, 2}, {0, 2},
@@ -158,7 +162,8 @@ TEST_CASE("CompressedGraph") {
         Graph res = CG.get_compressed_graph();
         CHECK(get_set_edges(res) == need_edges);
         CHECK(boost::num_vertices(res) == m);
-    } SUBCASE("Matching") {
+    }
+    SUBCASE("Matching") {
         int n = 6;
         std::vector<std::pair<int, int>> edges = {
                 {0, 5}, {1, 3},
@@ -177,7 +182,8 @@ TEST_CASE("CompressedGraph") {
         Graph res = CG.get_compressed_graph();
         CHECK(get_set_edges(res) == need_edges);
         CHECK(boost::num_vertices(res) == m);
-    } SUBCASE("Empty graph") {
+    }
+    SUBCASE("Empty graph") {
         int n = 0;
         std::vector<std::pair<int, int>> edges = {
         };
@@ -214,7 +220,8 @@ TEST_CASE("ComposedGraph::get_path_decomposition()") {
             pass = 0;
         }
         CHECK(pass);
-    } SUBCASE("Star graph") {
+    }
+    SUBCASE("Star graph") {
         int n = 12;
         std::vector<std::pair<vertex_t, vertex_t>> edges = {
                 {0, 11}, {1, 10}, {2, 9}, {3, 8},

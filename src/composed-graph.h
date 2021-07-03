@@ -1,12 +1,11 @@
+#ifndef COMPOSED_GRAPH_H
+#define COMPOSED_GRAPH_H
+
 #include "nice-path-decomposition.h"
 #include "path-decomposition.h"
 #include "centroid-tree.h"
 #include <string>
 #include <vector>
-
-#ifndef COMPOSED_GRAPH_H
-#define COMPOSED_GRAPH_H
-
 
 class ComposedGraph {
     /*
@@ -115,9 +114,9 @@ private:
 
 Graph get_good_subgraph(Graph &g, std::vector<vertex_t> &U_i);
 /*
- * returning Graph is isomorphic to subgraph g[U_i] but have vertices from 0 to |U| - 1
+ * returned Graph is isomorphic to subgraph g[U_i] but have vertices from 0 to |U| - 1
  * This is used to create PathDecomposition from subgraph g[U]
- * Function that rollbacks vertices indexes is PathDecomposition::enumerate()
+ * Function that rollbacks vertices indices is PathDecomposition::enumerate()
 */
 
 NicePathDecomposition perform_path_dec(Graph &g, std::vector<std::vector<vertex_t>> &U);

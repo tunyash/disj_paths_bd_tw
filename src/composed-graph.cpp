@@ -57,12 +57,19 @@ void ComposedGraph::check() {
 
 ComposedGraph::CorrectnessException::CorrectnessException(vertex_t outer_vertex, ComposedGraph *G):
 _G(G), _outer_vertex(outer_vertex) {
-    _msg = "In ComposedGraph |_G| vertex |_outer_vertex| does not belongs to any U[i]";
+    _msg = "In ComposedGraph |this->_G| vertex "
+            + std::to_string(_outer_vertex)
+            + " does not belongs to any U[i]";
 }
 
 ComposedGraph::CorrectnessException::CorrectnessException(ComposedGraph *G, int U_i, int U_j, vertex_t common_vertex):
 _G(G), _U_i(U_i), _U_j(U_j), _common_vertex(common_vertex) {
-    _msg = "|_G.U[_U_i]| and |_G.U[_U_j]| have common vertex |_common_vertex|";
+    _msg = "_G->U["
+            + std::to_string(_U_i)
+            + "] and _G->U["
+            + std::to_string(_U_j);
+            + "] have common vertex "
+            + std::to_string(_common_vertex);
 }
 
 ComposedGraph::CorrectnessException::CorrectnessException(vertex_t matching_vertex,
@@ -72,9 +79,18 @@ ComposedGraph::CorrectnessException::CorrectnessException(vertex_t matching_vert
                                   _matching_vertex(matching_vertex),
                                   _adjacent_vertex_first(adjacent_vertex_first),
                                   _adjacent_vertex_second(adjacent_vertex_second) {
-    _msg = std::string("Vertex |_matching_vertex| has 2 outer edges ") +
-            std::string("(_matching_vertex, _adjacent_vertex_first) and ") +
-            std::string("(_matching_vertex, _adjacent_vertex_second)");
+    _msg = "Vertex "
+           + std::to_string(_matching_vertex)
+           + " has 2 outer edges "
+           + "("
+           + std::to_string(matching_vertex)
+           + " , "
+           + std::to_string(adjacent_vertex_first)
+           + ") and ("
+           + std::to_string(_matching_vertex);
+           + ", "
+           + std::to_string(_adjacent_vertex_second);
+           + "_adjacent_vertex_second)";
 }
 
 const char * ComposedGraph::CorrectnessException::what() const throw() {

@@ -1,10 +1,10 @@
+#ifndef PATH_DECOMPOSITION_H
+#define PATH_DECOMPOSITION_H
+
 #include <vector>
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
 #include "../tdlib/src/treedec_traits.hpp"
-
-#ifndef PATH_DECOMPOSITION_H
-#define PATH_DECOMPOSITION_H
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Graph;
 typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
