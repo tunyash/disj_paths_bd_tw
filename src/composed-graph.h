@@ -1,17 +1,20 @@
 #include "nice-path-decomposition.h"
 #include "path-decomposition.h"
+#include "centroid-tree.h"
 #include <string>
 #include <vector>
 
 #ifndef COMPOSED_GRAPH_H
 #define COMPOSED_GRAPH_H
 
+
 class ComposedGraph {
     /*
-     * Def: ComposedGraph is a graph G that has a set U of sets U[i] of vertices of G.
-     * Def: edge (v, u) is OUTER if v is in U[i] and u is in U[j] and i != j
+     * Def: ComposedGraph <G, U> where G is object of class Graph and U is set of U[i].
+     * U[i] is a set of vertices of graph G
      * Rule: Union of sets U[i] = V(G) for i = 0...|V| - 1
      * Rule: Intersection of U[i] and U[j] is empty for all i != j
+     * Def: edge (v, u) is OUTER if v is in U[i] and u is in U[j] and i != j
      * Rule: Vertex is adjacent to 0 or 1 outer edges
      *
      * Def: Compressed graph is a graph __G__ formed from graph G
@@ -116,5 +119,11 @@ Graph get_good_subgraph(Graph &g, std::vector<vertex_t> &U_i);
  * This is used to create PathDecomposition from subgraph g[U]
  * Function that rollbacks vertices indexes is PathDecomposition::enumerate()
 */
+
+NicePathDecomposition perform_path_dec(Graph &g, std::vector<std::vector<vertex_t>> &U);
+/*
+ * @param <g, U> must be ComposedGraph
+ * @return NicePathDecomposition of graph g
+ */
 
 #endif

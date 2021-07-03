@@ -2,6 +2,31 @@
 #include "nice-path-decomposition.h"
 #include "composed-graph.h"
 
+std::vector<NicePathDecomposition> get_path_dec_U(Graph &g, std::vector<std::vector<vertex_t>> &U) {
+    std::vector<NicePathDecomposition> res;
+    for (auto _set : U) {
+        Graph ng = get_good_subgraph(g, _set);
+        CentroidTree CT(ng);
+        auto PD = CT.get_path_decomposition(ng);
+        res.push_back(NicePathDecomposition(PD));
+        res.back().enumerate(_set);
+    }
+    return res;
+}
+
+NicePathDecomposition get_path_dec_comp(ComposedGraph &CG) {
+    Graph compressed = CG.get_compressed_graph();
+    CentroidTree CT(compressed);
+    return NicePathDecomposition(CT.get_path_decomposition(compressed));
+}
+
+NicePathDecomposition perform_path_dec(Graph &g, std::vector<std::vector<vertex_t>> &U) {
+    auto pw_u = get_path_dec_U(g, U);
+    ComposedGraph CG(g, U, pw_u);
+    auto pw_comp = get_path_dec_comp(CG);
+    return CG.get_path_decomposition(pw_comp);
+}
+
 void ComposedGraph::check() {
     int n = boost::num_vertices(_G);
     _matchings.assign(n, -1);
@@ -93,7 +118,12 @@ NicePathDecomposition ComposedGraph::get_path_decomposition(NicePathDecompositio
 ComposedGraph::ComposedGraph(Graph &G,
                              std::vector<std::vector<vertex_t>> &U,
                              std::vector<NicePathDecomposition> &pw_u) :
-                             _U(U), _pw_u(pw_u), _G(G) {
+                             _pw_u(pw_u), _G(G) {
+    for (auto &vec : _U) {
+        std::sort(vec.begin(), vec.end());
+        vec.resize(std::unique(vec.begin(), vec.end()) - vec.begin());
+    }
+    _U = U;
     check();
 }
 

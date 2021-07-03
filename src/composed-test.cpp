@@ -196,31 +196,6 @@ TEST_CASE("CompressedGraph") {
     }
 }
 
-std::vector<NicePathDecomposition> get_path_dec_U(Graph &g, std::vector<std::vector<vertex_t>> &U) {
-    std::vector<NicePathDecomposition> res;
-    for (auto _set : U) {
-        Graph ng = get_good_subgraph(g, _set);
-        CentroidTree CT(ng);
-        auto PD = CT.get_path_decomposition(ng);
-        res.push_back(NicePathDecomposition(PD));
-        res.back().enumerate(_set);
-    }
-    return res;
-}
-
-NicePathDecomposition get_path_dec_comp(ComposedGraph &CG) {
-    Graph compressed = CG.get_compressed_graph();
-    CentroidTree CT(compressed);
-    return NicePathDecomposition(CT.get_path_decomposition(compressed));
-}
-
-void perform_path_dec(Graph &g, std::vector<std::vector<vertex_t>> &U) {
-    auto pw_u = get_path_dec_U(g, U);
-    ComposedGraph CG(g, U, pw_u);
-    auto pw_comp = get_path_dec_comp(CG);
-    CG.get_path_decomposition(pw_comp);
-}
-
 TEST_CASE("ComposedGraph::get_path_decomposition()") {
     SUBCASE("Loop") {
         int n = 6;
@@ -239,5 +214,18 @@ TEST_CASE("ComposedGraph::get_path_decomposition()") {
             pass = 0;
         }
         CHECK(pass);
+    } SUBCASE("Star graph") {
+        int n = 12;
+        std::vector<std::pair<vertex_t, vertex_t>> edges = {
+                {0, 11}, {1, 10}, {2, 9}, {3, 8},
+                {4, 7}, {5, 6}, {6, 11}, {11, 10},
+                {10, 9}, {9, 8}, {8, 7}, {7, 6}
+        };
+        std::vector<std::vector<vertex_t>> U = {
+                {0}, {1}, {2}, {3}, {4}, {5},
+                {6, 7, 8, 9, 10, 11}
+        };
+        Graph g(edges.begin(), edges.end(), n);
+        perform_path_dec(g, U);
     }
 }
