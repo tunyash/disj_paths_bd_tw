@@ -116,7 +116,12 @@ Graph get_good_subgraph(Graph &g, std::vector<vertex_t> &U_i);
 /*
  * returned Graph is isomorphic to subgraph g[U_i] but have vertices from 0 to |U| - 1
  * This is used to create PathDecomposition from subgraph g[U]
- * Function that rollbacks vertices indices is PathDecomposition::enumerate()
+ * Function that rollback vertices indices are PathDecomposition::enumerate()
+ * Highly recommended U_i to have all unique vertices
+ * After sorting of U_i:
+ * vertex 0 is U_i[0],
+ * vertex 1 is U_i[1],
+ * etc
 */
 
 NicePathDecomposition perform_path_dec(Graph &g, std::vector<std::vector<vertex_t>> &U);
