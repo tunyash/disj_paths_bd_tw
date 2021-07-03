@@ -1,3 +1,6 @@
+#ifndef CENTROID_TREE_H
+#define CENTROID_TREE_H
+
 #include <vector>
 #include <string>
 #include "path-decomposition.h"
@@ -58,3 +61,5 @@ public:
     */
 
 };
+
+#endif

@@ -1,5 +1,7 @@
-#include "centroid-tree.h"
+#ifndef NICE_PATH_DECOMPOSITION_H
+#define NICE_PATH_DECOMPOSITION_H
 
+#include "centroid-tree.h"
 
 class NicePathDecomposition : public PathDecomposition {
     /*
@@ -13,13 +15,13 @@ public:
 
     struct Bag {
         bag_types type;
-        vertex_t v = -1;
+        vertex_t vertex = -1;
         edge_t edge;
 
-        Bag(bag_types bag_type, vertex_t v) : type(bag_type), v(v) {}
+        Bag(bag_types bag_type, vertex_t v) : type(bag_type), vertex(v) {}
         // Constructor for ADD_VERTEX and REMOVE_VERTEX bags
 
-        Bag(bag_types bag_type, edge_t edge) : type(bag_type), edge(edge) {}
+        Bag(edge_t edge) : type(ADD_EDGE), edge(edge) {}
         // Constructor for ADD_EDGE bags
 
         Bag() = default;
@@ -29,7 +31,7 @@ public:
     };
 
     enum error_types {
-        MISS_VERTEX, MISS_EDGE, LEFT_VERTEX
+        ADD_VERTEX_E, REMOVE_VERTEX_E, REMOVE_BEFORE_ADDING, ADD_EDGE_BEFORE_VERTEX, MISS_EDGE, EXTRA_EDGE,
     };
 
     struct NiceBagsCorrectnessException : public std::exception {
@@ -41,21 +43,37 @@ public:
 
         NiceBagsCorrectnessException(error_types type, vertex_t v);
 
-        NiceBagsCorrectnessException(edge_t edge);
+        NiceBagsCorrectnessException(error_types type, edge_t edge);
+
+        NiceBagsCorrectnessException(error_types type);
 
         ~NiceBagsCorrectnessException() throw() = default;
 
         const char *what() const throw();
     };
 
+    void enumerate(std::vector<vertex_t> &U);
+    /*
+     * This function sorts U and assign and change vertex |i| to vertex |U[i]|
+     * Check out fucntion in composed-graph.h get_good_subgraph
+     * Also check composed-test.cpp to
+     * It is not recommended to use this function without get_good_subgraph
+     */
 
     const std::vector<Bag> &get_nice_bags();
+
+    NicePathDecomposition() = default;
+
+    NicePathDecomposition(std::vector<Bag> &nice_bags, Graph &g);
 
     NicePathDecomposition(std::vector<std::vector<vertex_t>> &bags, Graph &g);
     // Constructor makes NicePathDecomposition using bags sequence
 
     explicit NicePathDecomposition(PathDecomposition pathDecomposition);
     // Constructor makes NicePathDecomposition using PathDecomposition
+
+    static std::vector<std::vector<vertex_t>> convert_nice_bags(std::vector<Bag> nice_bags);
+    // Convert nice_bag to bag sequence
 
     void is_correct();
     // Function checks if _nice_bags is correct
@@ -67,3 +85,5 @@ private:
 
     void fill_nice_bags();
 };
+
+#endif

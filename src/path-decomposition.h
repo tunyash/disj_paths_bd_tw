@@ -1,3 +1,6 @@
+#ifndef PATH_DECOMPOSITION_H
+#define PATH_DECOMPOSITION_H
+
 #include <vector>
 #include <string>
 #include <boost/graph/adjacency_list.hpp>
@@ -29,12 +32,17 @@ public:
         Thrown when path-width decomposition is incorrect
         */
     private:
+
         std::string msg;
+
     public:
+
         int _error_type;
         int _bag_i, _bag_j, _bag_k, _violating_node;
+        PathDecomposition *_PD;
+        //_PD is PathDecomposition object which caused exception
 
-        CorectnessException(int error_type);
+        CorectnessException(int error_type, PathDecomposition *PD);
 
         /*
         @error_type == 0 is used when in graph |_g| exists edge (v, u) but in |_bags| there is no bag that contains {v, u}
@@ -42,7 +50,7 @@ public:
         @error_type == 3 is used when exists vertex |v| that does not belong to |_bags|
         */
 
-        CorectnessException(int bag_i, int bag_j, int bag_k, int violating_node);
+        CorectnessException(int bag_i, int bag_j, int bag_k, int violating_node, PathDecomposition *PD);
         /*
         This is used only for error_type == 2
         @error_type == 2 is used when |_bags[bag_i]| and |_bags[bag_k]|
@@ -62,11 +70,8 @@ public:
     @exceptions throw CorrectnessException if decomposition is not correct
     */
 
-    PathDecomposition(Graph &g);
-
-    PathDecomposition();
-//    Calls function |transform|
-//    @exceptions throw CorrectnessException if algorithm works incorrect
+    PathDecomposition() = default;
+//
 
     const std::vector<std::vector<vertex_t>> &get_bags() const {
         return _bags;
@@ -76,6 +81,13 @@ public:
         return _g;
     }
 
+    void enumerate(std::vector<vertex_t> &U);
+    /*
+     * This function sorts U and assign and change vertex |i| to vertex |U[i]|
+     * Check out fucntion in composed-graph.h get_good_subgraph
+     * Also check composed-test.cpp to
+     * It is not recommended to use this function without get_good_subgraph
+     */
 
 protected:
 
@@ -88,3 +100,4 @@ protected:
 
 };
 
+#endif
