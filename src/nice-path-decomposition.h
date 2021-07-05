@@ -78,6 +78,10 @@ public:
     void is_correct();
     // Function checks if _nice_bags is correct
 
+    void push_back_bag(Bag b);
+
+    void pop_back_bag();
+
 private:
     std::vector<Bag> _nice_bags;
 

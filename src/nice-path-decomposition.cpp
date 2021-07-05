@@ -176,7 +176,7 @@ std::vector<std::vector<vertex_t>> NicePathDecomposition::convert_nice_bags(std:
     return bags;
 }
 
-void NicePathDecomposition::enumerate(std::vector <vertex_t> &U) {
+void NicePathDecomposition::enumerate(std::vector<vertex_t> &U) {
     sort(U.begin(), U.end());
     U.resize(std::unique(U.begin(), U.end()) - U.begin());
     for (auto &bag : _bags) {
@@ -191,4 +191,12 @@ void NicePathDecomposition::enumerate(std::vector <vertex_t> &U) {
             bag.edge.m_target = U[bag.edge.m_target];
         }
     }
+}
+
+void NicePathDecomposition::push_back_bag(Bag b) {
+    _nice_bags.push_back(b);
+}
+
+void NicePathDecomposition::pop_back_bag() {
+    _nice_bags.pop_back();
 }
